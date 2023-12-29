@@ -4,4 +4,4 @@ nvidia-smi : nvidia 버전확인
 
 //
 
-최적의 weight를 찾는것이 ai, 임의의 weight와 실제값이 다른 것을 loss라고 함, 최소의 loss -> 최적의 weight
+
