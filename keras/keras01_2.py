@@ -12,9 +12,9 @@ model = Sequential()
 model.add(Dense(1, input_dim=1))
 
 model.compile(loss="mse", optimizer="adam")
-model.fit(x,y, epochs=1000)
+model.fit(x,y, epochs=10000)
 
 loss = model.evaluate(x,y)
-result = model.predict([1,2,3,4,5,6,7])
+result = model.predict([7])
 
 print("result : ", result)
