@@ -17,7 +17,7 @@ model.add(Dense(1,input_dim=1))                                 # 밀집도를 ~
 
 #3. 컴파일, 훈련
 model.compile(loss='mse', optimizer='adam')                     # mse 손실함수는 제곱값으로 사용, adam은 그냥 써라
-model.fit(x, y, epochs=1000)                                   # 최적의 웨이트가 생성, epochs= 훈련 횟수
+model.fit(x, y, epochs=1000)                                    # 최적의 웨이트가 생성, epochs= 훈련 횟수
 
 #4. 평가, 예측
 loss = model.evaluate(x, y)
