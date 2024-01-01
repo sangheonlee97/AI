@@ -4,4 +4,4 @@ nvidia-smi : nvidia 버전확인
 
 //
 
-
+batch_size 디폴트값 32
