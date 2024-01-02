@@ -4,4 +4,5 @@ nvidia-smi : nvidia 버전확인
 
 //
 
-batch_size 디폴트값 32
+batch_size : 데이터를 집어넣을 때 나누는 단위, 디폴트값 32
+
