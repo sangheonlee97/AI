@@ -1,8 +1,9 @@
 cmd:
 nvidia-smi : nvidia 버전확인
 
-
+compile() : / loss='mse' : mean squared error / 실제 값과 예측값의 차이를 기준으로 오차를 판단하는 방식
+            / optimizer='adam' : 아직 설명없음, adam이 국룰
 //
 
-batch_size : 데이터를 집어넣을 때 나누는 단위, 디폴트값 32
+batch_size : 데이터셋을 신경망에 여러 조각으로 나누어 넣을 때, 나눠 담는 데이터의 양. 디폴트 값=32
 
