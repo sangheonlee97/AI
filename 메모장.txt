@@ -8,3 +8,18 @@ compile() : / loss='mse' : mean squared error / 실제 값과 예측값의 차�
 batch_size : 데이터셋을 신경망에 여러 조각으로 나누어 넣을 때, 나눠 담는 데이터의 양. 디폴트 값=32
 
 mlp = multi-layer perceptron : perceptron으로 이루어져있는 layer를 여러개 갖고 있는 형태.
+
+//
+
+1. data set을 읽는다.
+2. 슬쩍 확인
+3. isnull()로 결측치 확인. 결측치 있을 경우 (1) fillna()...
+4. data encoding : pd.factorize(), replace(), LabelEncoder() ,,,
+5. data normalization or standardization (데이터 정규화) : feature 값을 0~1의 값으로 바꾸거나     평균이 0, 분산이 1이 되도록 바꾸는 것
+5-1. 문제에 따라 column의 중요도? 파악
+6. 데이터셋 스플릿(train, test)
+7. modeling : 문제 해결에 가장 효율적인 모델 선정
+8. compile, fit : 정확도(accuracy)를 올리기 위해 가장 중요하다고 표현한 사람도 있었던 optimizer(최적화 기법)를 잘 선택해야 한다...
+???) 하이퍼 파라미터 튜닝을 할 때 grid search로 탐색후 진행하는 경우도 있었다. 
+9. 예측, 평가 : 주로 보이는 평가 지표 confusion matrix, loss, acc, val_loss, val_acc ,,,,
+10. 답안 제출
