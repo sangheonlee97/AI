@@ -29,3 +29,8 @@ loss = model.evaluate(x,y)
 pred = model.predict([[10, 1.3, 0]])
 
 print("re : ", pred)
+# loss: 8.1430e-07
+# re :  [[9.999004]] / eochs=100, batch_size=1
+
+# loss: 8.4963e-08
+# re :  [[10.000688]] / eochs=100, batch_size=1
