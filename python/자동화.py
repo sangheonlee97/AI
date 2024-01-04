@@ -1,22 +1,16 @@
 from sklearn.datasets import fetch_california_housing
-from sklearn.model_selection import train_test_split, RandomizedSearchCV
+from sklearn.model_selection import train_test_split
 from keras.models import Sequential
 from keras.layers import Dense
-from sklearn.metrics import r2_score, accuracy_score
-import numpy as np
-import pandas as pd
+from sklearn.metrics import r2_score
 import time
-
 
 datasets = fetch_california_housing()
 
-# print(datasets.feature_names)       # ['MedInc', 'HouseAge', 'AveRooms', 'AveBedrms', 'Population', 'AveOccup', 'Latitude', 'Longitude']
-
+print(datasets.feature_names)       # ['MedInc', 'HouseAge', 'AveRooms', 'AveBedrms', 'Population', 'AveOccup', 'Latitude', 'Longitude']
 
 X = datasets.data
 y = datasets.target
-
-
 
 # [실습]
 # R2 0.55 ~ 0.6
@@ -30,8 +24,6 @@ model.add(Dense(15))
 model.add(Dense(1))
 
 model.compile(loss='mse', optimizer='adam')
-
-
 
 start_time = time.time()
 

@@ -26,9 +26,7 @@ y = datasets.target
 # train_size 0.7이상 0.9 이하
 # R2 0.62 이상
 
-
-
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=587)
 
 model = Sequential()
 model.add(Dense(25, input_dim=13))
@@ -42,7 +40,7 @@ model.compile(loss='mse', optimizer='adam')
 import time
 start_time = time.time()
 
-model.fit(X_train, y_train, epochs=100, batch_size=2)
+model.fit(X_train, y_train, epochs=150, batch_size=4)
 
 
 end_time = time.time()
@@ -57,3 +55,10 @@ r2 = r2_score(y_test, y_pred)
 print("loss : ", loss)
 
 print("r2 : ", r2)
+
+
+# random_state =  587
+# epochs =  150
+# batch_size =  4
+# loss :  20.571069717407227
+# r2 =  0.7477602886456849
