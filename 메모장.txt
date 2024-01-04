@@ -23,3 +23,7 @@ mlp = multi-layer perceptron : perceptron으로 이루어져있는 layer를 여�
 ???) 하이퍼 파라미터 튜닝을 할 때 grid search로 탐색후 진행하는 경우도 있었다. 
 9. 예측, 평가 : 주로 보이는 평가 지표 confusion matrix, loss, acc, val_loss, val_acc ,,,,
 10. 답안 제출
+
+//
+
+train_test_split() 에서 train_size 파라미터와 test_size 파라미터는 반비례되는 성질이지만, 그 합이 1이 안되어도 실행은 된다.(but, data 손실이 일어남)

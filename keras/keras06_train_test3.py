@@ -12,3 +12,20 @@ print("X_train : ",X_train)
 print("X_test : ",X_test)
 print("y_train : ", y_train)
 print("y_test : ", y_test)
+
+model = Sequential()
+model.add(Dense(1,input_dim=1))
+model.add(Dense(10))
+model.add(Dense(10))
+model.add(Dense(10))
+model.add(Dense(10))
+model.add(Dense(1))
+
+model.compile(loss='mse', optimizer='adam')
+model.fit(X_train,y_train, epochs=1000, batch_size=1)
+
+loss = model.evaluate(X_test,y_test)
+pred = model.predict([1100000, 7])
+
+print("loss : ", loss)
+print("pred : ", pred)
