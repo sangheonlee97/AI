@@ -48,6 +48,9 @@ train_csv = train_csv.dropna()
 
 ###### 결측치 처리 2. 평균 ######
 test_csv = test_csv.fillna(test_csv.mean())
+# test_csv.fillna(value=0, inplace=True)
+print(test_csv.shape)
+print(test_csv.info())
 ################################
 
 ######## X, y를 분리 ##########
@@ -61,10 +64,12 @@ y_t = train_csv['count']
 ###############################
 
 
+    
+
         
 
 
-X_train, X_test, y_train, y_test = train_test_split(X_t, y_t, test_size=0.3, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X_t, y_t, test_size=0.1, random_state=58356)
 print(X_train.shape, X_test.shape)
 print(y_train.shape, y_test.shape)
 
@@ -73,21 +78,22 @@ print(y_train.shape, y_test.shape)
 
 model = Sequential()
 model.add(Dense(23, input_dim=9))
+model.add(Dense(300))
+model.add(Dense(200))
+model.add(Dense(130))
+model.add(Dense(200))
 model.add(Dense(1))
 
 # 3. compile
 model.compile(loss='mse', optimizer='adam')
-model.fit(X_train, y_train, epochs=10, batch_size=10)
+model.fit(X_train, y_train, epochs=500, batch_size=3)
 
 # 4. evaluate, predict
-model.evaluate(X_test, y_test)
 y_submit = model.predict(test_csv)
-print("############")
+# model.evaluate(X_test, y_test)
+# r2 = r2_score(y_test, y_pred)
+# print("r2 : ", r2)
 
-print(y_submit.shape)
-print("############")
 ####### submission.csv 만들기 ( count 컬럼에 값만 넣어주면 된다) ##########
 submission_csv['count'] = y_submit
-print( submission_csv)
-
 submission_csv.to_csv(path + "submission_0105.csv", index=False)
