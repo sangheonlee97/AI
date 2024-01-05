@@ -15,7 +15,7 @@ mlp = multi-layer perceptron : perceptron으로 이루어져있는 layer를 여�
 2. 슬쩍 확인
 3. isnull()로 결측치 확인. 결측치 있을 경우 (1) fillna()...
 4. data encoding : pd.factorize(), replace(), LabelEncoder() ,,,
-5. data normalization or standardization (데이터 정규화) : feature 값을 0~1의 값으로 바꾸거나     평균이 0, 분산이 1이 되도록 바꾸는 것
+5. data normalization or standardization (데이터 정규화) : feature 값을 0~1의 값으로 바꾸거나     평균이 0, 분산이 1이 되도록 스케일링
 5-1. 문제에 따라 column의 중요도? 파악
 6. 데이터셋 스플릿(train, test)
 7. modeling : 문제 해결에 가장 효율적인 모델 선정
@@ -30,3 +30,6 @@ train_test_split() 에서 train_size 파라미터와 test_size 파라미터는 �
 
 plt .  scatter : 점 찍기
     .  plot    : 선 긋기
+
+//
+
