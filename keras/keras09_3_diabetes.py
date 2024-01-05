@@ -20,7 +20,7 @@ print(datasets.DESCR)
 # [실습]
 # R2 0.62 이상
 
-X_train , X_test, y_train, y_test = train_test_split(X, y, test_size=0.15, random_state=712) #9:5.8,   
+X_train , X_test, y_train, y_test = train_test_split(X, y, test_size=0.15, random_state=1226) #9:5.8,   
 
 model = Sequential()
 model.add(Dense(8, input_dim=10))
@@ -38,3 +38,7 @@ model.evaluate(X_test, y_test)
 r2 = r2_score(y_test, y_pred)
 
 print("r2 : ", r2)
+
+
+# loss: 38.3255
+# r2 :  0.6921353774126602
