@@ -67,7 +67,7 @@ tX = test_csv.dropna() # 이거로 결측치가 많은 컬럼에 대해 학습�
 tX_x = tX.iloc[:,:-3]   # 타겟 값 분리
 tX_y = tX.iloc[:,-3:]
 
-tX_x_train, tX_x_test, tX_y_train, tX_y_test = train_test_split(tX_x, tX_y, test_size=0.15, random_state=8808)
+tX_x_train, tX_x_test, tX_y_train, tX_y_test = train_test_split(tX_x, tX_y, test_size=0.15, random_state=8804358)
 # print(tX_x_train.shape) # (572, 6)
 # print(tX_y_train.shape) # (572, 3)
 model_2 = Sequential()
@@ -120,7 +120,7 @@ y_t = train_csv['count']
         
 
 
-X_train, X_test, y_train, y_test = train_test_split(X_t, y_t, test_size=0.15, random_state=8808)
+X_train, X_test, y_train, y_test = train_test_split(X_t, y_t, test_size=0.15, random_state=81249708)
 print(X_train.shape, X_test.shape)
 print(y_train.shape, y_test.shape)
 
@@ -128,16 +128,12 @@ print(y_train.shape, y_test.shape)
 # 2. model
 
 model = Sequential()
-model.add(Dense(23, input_dim=9))
-model.add(Dense(30))
-model.add(Dense(20))
-model.add(Dense(13))
-model.add(Dense(20))
+model.add(Dense(3, input_dim=9))
 model.add(Dense(1))
 
 # 3. compile
 model.compile(loss='mse', optimizer='adam')
-model.fit(X_train, y_train, epochs=100, batch_size=20)
+model.fit(X_train, y_train, epochs=1000, batch_size=20)
 
 # 4. evaluate, predict
 y_submit = model.predict(test_csv)
@@ -148,6 +144,6 @@ y_submit = model.predict(test_csv)
 ####### submission.csv 만들기 ( count 컬럼에 값만 넣어주면 된다) ##########
 submission_csv['count'] = y_submit
 
-print(submission_csv[submission_csv['count'].isna()])
+# print(submission_csv[submission_csv['count'].isna()])
 
-submission_csv.to_csv(path + "submission_0105.csv", index=False)
+submission_csv.to_csv(path + "submission_0106_2.csv", index=False)

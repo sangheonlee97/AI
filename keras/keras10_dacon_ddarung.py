@@ -48,13 +48,13 @@ train_csv = train_csv.dropna()
 
 ###### 결측치 처리 2. 평균 ######
 # test_csv = test_csv.fillna(test_csv.mean())
-# test_csv.fillna(value=0, inplace=True)
+test_csv.fillna(value=0, inplace=True)
 # print(test_csv.shape)
 # print(test_csv.info())
 #
 #
 ################################
-
+'''
 ##### 결측치 처리 3. 다른 컬럼으로 학습 #####
 # 적은 수의 결측치는 그냥 평균으로 대입
 #test_csv[fillna(test_csv(test_csv.mean()))
@@ -101,7 +101,7 @@ tX_real_y = y2_sub
 tX_test.iloc[:,-3:] = tX_real_y
 test_csv.loc[test_csv.isna().any(axis=1)] = tX_test
 ######## 3개의 컬럼 결측치, 다른 컬럼으로 학습시킨 예측값으로 채움
-
+'''
 ###########################################
 
 ######## X, y를 분리 ##########
@@ -120,7 +120,7 @@ y_t = train_csv['count']
         
 
 
-X_train, X_test, y_train, y_test = train_test_split(X_t, y_t, test_size=0.15, random_state=8808)
+X_train, X_test, y_train, y_test = train_test_split(X_t, y_t, test_size=0.15, random_state=242343243)
 print(X_train.shape, X_test.shape)
 print(y_train.shape, y_test.shape)
 
@@ -137,7 +137,7 @@ model.add(Dense(1))
 
 # 3. compile
 model.compile(loss='mse', optimizer='adam')
-model.fit(X_train, y_train, epochs=100, batch_size=20)
+model.fit(X_train, y_train, epochs=1000, batch_size=20)
 
 # 4. evaluate, predict
 y_submit = model.predict(test_csv)
@@ -148,6 +148,6 @@ y_submit = model.predict(test_csv)
 ####### submission.csv 만들기 ( count 컬럼에 값만 넣어주면 된다) ##########
 submission_csv['count'] = y_submit
 
-print(submission_csv[submission_csv['count'].isna()])
+# print(submission_csv[submission_csv['count'].isna()])
 
-submission_csv.to_csv(path + "submission_0106.csv", index=False)
+submission_csv.to_csv(path + "submission_0106_1.csv", index=False)
