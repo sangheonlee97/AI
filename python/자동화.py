@@ -94,13 +94,12 @@ def auto(a, b, c):
     # submission_csv.to_csv(path + "submission_0105.csv", index=False)
 import random
 m = []
-for i in range(1,100000):
+for i in range(1,1000000):
     #b = random.randrange(1,900000000)
-    a = auto(i + 1000, 100, 20)
+    a = auto(i + 1300, 100, 20)
     if a > 0.68:
         m.append({i+1000,a})
         np.savetxt('test.csv', m, fmt='%s', delimiter=', ')
-        break
 
 for i in m:
     print(i)
