@@ -27,20 +27,20 @@ df_train = df_train.drop(['registered'], axis=1)
 df_train_X = df_train.drop(['count'], axis=1)
 df_train_y = df_train['count']
 
-df_train_X_train, df_train_X_test, df_train_y_train, df_train_y_test = train_test_split(df_train_X, df_train_y, test_size=0.3, shuffle=0, random_state=42)
+df_train_X_train, df_train_X_test, df_train_y_train, df_train_y_test = train_test_split(df_train_X, df_train_y, test_size=0.2, shuffle=0, random_state=415113322)
 
 # 2. modeling
 model = Sequential()
-model.add(Dense(20, input_dim=8))
-model.add(Dense(40))
-model.add(Dense(40))
-model.add(Dense(40))
-model.add(Dense(20))
-model.add(Dense(1))
+model.add(Dense(100, input_dim=8, activation='relu'))
+model.add(Dense(100, activation='relu'))
+model.add(Dense(100, activation='relu'))
+model.add(Dense(100, activation='relu'))
+model.add(Dense(100, activation='relu'))
+model.add(Dense(1, activation='relu'))
 
 # 3. compile, fit
 model.compile(loss='mse', optimizer='adam')
-model.fit(df_train_X_train, df_train_y_train, epochs=200, batch_size=100)
+model.fit(df_train_X_train, df_train_y_train, epochs=500, batch_size=500)
 
 # 4. predict
 y_pred = model.predict(df_train_X_test)
@@ -48,11 +48,8 @@ r2 = r2_score(df_train_y_test, y_pred)
 print("r2 score : ",r2)
 
 y_sub = model.predict(df_test)
-idx = 0
-for i in y_sub:
-    if i < 0:
-        y_sub[idx] = 0
-    idx = idx + 1
 
 df_sub['count'] = y_sub
+print("음수 갯수 : ", df_sub[df_sub['count']<0].count())
+
 df_sub.to_csv(path + "submission.csv", index=False)
