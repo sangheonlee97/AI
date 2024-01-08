@@ -1,105 +1,80 @@
-# https://dacon.io/competitions/open/235576/overview/description
-
-import pandas as pd
 import numpy as np
-from sklearn.model_selection import train_test_split
+import pandas as pd
 from keras.models import Sequential
 from keras.layers import Dense
-from sklearn.metrics import r2_score, mean_squared_error
-import time
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import r2_score, mean_squared_log_error, mean_squared_error
+path = "C:\\Study\\_data\\kaggle\\bike\\"
+
+
 # 1. data
-path = "..\_data\dacon\ddarung\\"
+df_train = pd.read_csv(path + "train.csv", index_col=0)
+df_test = pd.read_csv(path + "test.csv", index_col=0)
+df_sub = pd.read_csv(path + "sampleSubmission.csv")
+# print(df_train.shape)   # (10886, 11)
+# print(df_test.shape)    # (6493, 8)
+# print(df_sub.shape)     # (6493, 2)
 
-train_csv = pd.read_csv(path + "train.csv", index_col='id')
-# print(train_csv.shape)  # (1459, 10)
+# train df의 'casual', 'registered' 컬럼 삭제
+df_train = df_train.drop(['casual'], axis=1)
+df_train = df_train.drop(['registered'], axis=1)
+# print(df_train.shape)   # (10886, 9)
 
-test_csv = pd.read_csv(path + "test.csv", index_col='id')
-# print(test_csv.shape)   # (715, 9)
+# print(df_train.isna().sum()) # 0
+# print(df_test.isna().sum()) # 0
 
-submission_csv = pd.read_csv( path + "submission.csv")
-# print(submission_csv.shape) # (715, 2)
+# train df의 target 분리
+df_train_X = df_train.drop(['count'], axis=1)
+df_train_y = df_train['count']
 
-# print(train_csv.columns)
-# Index(['hour', 'hour_bef_temperature', 'hour_bef_precipitation',
-#        'hour_bef_windspeed', 'hour_bef_humidity', 'hour_bef_visibility',
-#        'hour_bef_ozone', 'hour_bef_pm10', 'hour_bef_pm2.5', 'count'],
-#       dtype='object')
-
-# print(train_csv.info())
-# print(test_csv.info())
-
-# print(train_csv.describe())
-
-###### 결측치 처리 1. 제거 ######
-# print(train_csv.isna().sum())
-train_csv = train_csv.dropna()
-# print(train_csv.isna().sum())
-
-# hour                        0 -> 0
-# hour_bef_temperature        2 -> 0
-# hour_bef_precipitation      2 -> 0
-# hour_bef_windspeed          9 -> 0
-# hour_bef_humidity           2 -> 0
-# hour_bef_visibility         2 -> 0
-# hour_bef_ozone             76 -> 0
-# hour_bef_pm10              90 -> 0
-# hour_bef_pm2.5            117 -> 0
-###############################
-
-###### 결측치 처리 2. 평균 ######
-test_csv = test_csv.fillna(test_csv.mean())
-################################
-
-######## X, y를 분리 ##########
-X_t = train_csv.drop(['count'], axis=1)
-y_t = train_csv['count']
-# X_t = train_csv.iloc[:,:-1]
-# # print(X_t.shape)    # (1459, 9)
-
-# y_t = train_csv.iloc[:,-1:]
-# # print(y_t.shape)    # (1459, 1)
-###############################
-
-
-def auto(a, b, c):
-
-    X_train, X_test, y_train, y_test = train_test_split(X_t, y_t, test_size=0.15, random_state=a)
-    # print(X_train.shape, X_test.shape)
-    # print(y_train.shape, y_test.shape)
-
-
-    # 2. model
-
+df_train_X_train, df_train_X_test, df_train_y_train, df_train_y_test = train_test_split(df_train_X, df_train_y, test_size=0.2, shuffle=0)
+def auto(batchsize):
+    # 2. modeling
     model = Sequential()
-    model.add(Dense(23, input_dim=9))
-    model.add(Dense(30))
-    model.add(Dense(20))
-    model.add(Dense(13))
-    model.add(Dense(20))
+    model.add(Dense(10, input_dim=8, activation='relu'))
+    model.add(Dense(15, activation='relu'))
+    model.add(Dense(10, activation='relu'))
     model.add(Dense(1))
 
-    # 3. compile
+    # 3. compile, fit  
     model.compile(loss='mse', optimizer='adam')
-    model.fit(X_train, y_train, epochs=b, batch_size=c)
+    model.fit(df_train_X_train, df_train_y_train, epochs=500, batch_size=batchsize, verbose=0)
 
-    # 4. evaluate, predict
-    y_pred = model.predict(X_test)
-    model.evaluate(X_test, y_test)
-    r2 = r2_score(y_test, y_pred)
-    print("r2 : ", r2)
-    # time.sleep(1)
-    return r2
-    ####### submission.csv 만들기 ( count 컬럼에 값만 넣어주면 된다) ##########
-    #submission_csv['count'] = y_submit
-    # submission_csv.to_csv(path + "submission_0105.csv", index=False)
-import random
+    # 4. predict
+    y_pred = model.predict(df_train_X_test)
+    r2 = r2_score(df_train_y_test, y_pred)
+    print("r2 score : ",r2)
+
+    y_sub = model.predict(df_test)
+
+    df_sub['count'] = y_sub
+    print("음수 갯수 : ", df_sub['count'][df_sub['count']<0].count())
+
+    df_sub.to_csv(path + "submission.csv", index=False)
+
+
+    def RMSE(y_test, y_predict):
+        return np.sqrt(mean_squared_error(y_test, y_predict))
+    def RMSLE(y_test, y_predict):
+        return np.sqrt(mean_squared_log_error(y_test, y_predict))
+        
+    rmse = RMSE(df_train_y_test, y_pred)
+    print("MSE : ",model.evaluate(df_train_X_test, df_train_y_test))
+
+    print("RMSE : ", rmse)
+    
+    for i in y_pred:
+        if i < 0:
+            return 999
+    
+    rmsle = RMSLE(df_train_y_test, y_pred)
+    print("RMSLE : ", rmsle)
+    
+    return rmsle
 m = []
-for i in range(1,1000000):
-    #b = random.randrange(1,900000000)
-    a = auto(i + 1300, 100, 20)
-    if a > 0.68:
-        m.append({i+1000,a})
-        np.savetxt('test.csv', m, fmt='%s', delimiter=', ')
-
-for i in m:
-    print(i)
+for i in range(5000,100, -100):
+    a = auto(700)
+    if a < 1.35:
+        m.append({a, i})
+        np.savetxt('test_kaggle_bike.csv', m, fmt='%s', delimiter=', ')
+        

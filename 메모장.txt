@@ -38,3 +38,7 @@ round(n) : 소수점 n 번째 자리에서 반올림
 //
 
 activation(활성화 함수) : 인공 신경망에서 입력을 변환하는 함수이다. ReLU, 시그모이드 함수, 쌍곡탄젠트 함수 등이 대표적인 활성화 함수이다.
+model.fit( verbose= )   : verbose=0 : 침묵
+                          verbose=1 : 디폴트
+                          verbose=2 : 프로그래스바 삭제
+                          verbose=나머지 : epoch 만 나옴
