@@ -28,9 +28,13 @@ mlp = multi-layer perceptron : perceptron으로 이루어져있는 layer를 여�
 
 train_test_split() 에서 train_size 파라미터와 test_size 파라미터는 반비례되는 성질이지만, 그 합이 1이 안되어도 실행은 된다.(but, data 손실이 일어남)
 
-plt .  scatter : 점 찍기
-    .  plot    : 선 긋기
+plt.scatter : 점 찍기
+   .plot    : 선 긋기
 
 //
 
 round(n) : 소수점 n 번째 자리에서 반올림
+
+//
+
+activation(활성화 함수) : 
