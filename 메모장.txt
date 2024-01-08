@@ -33,3 +33,4 @@ plt .  scatter : 점 찍기
 
 //
 
+round(n) : 소수점 n 번째 자리에서 반올림
