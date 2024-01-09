@@ -27,18 +27,25 @@ df_train = df_train.drop(['registered'], axis=1)
 df_train_X = df_train.drop(['count'], axis=1)
 df_train_y = df_train['count']
 
-df_train_X_train, df_train_X_test, df_train_y_train, df_train_y_test = train_test_split(df_train_X, df_train_y, test_size=0.2, shuffle=0)
-def auto(batchsize):
+df_train_X_train, df_train_X_test, df_train_y_train, df_train_y_test = train_test_split(df_train_X, df_train_y, test_size=0.4, shuffle=False, random_state=6544)
+
+
+def auto():
     # 2. modeling
     model = Sequential()
     model.add(Dense(10, input_dim=8, activation='relu'))
-    model.add(Dense(15, activation='relu'))
+    model.add(Dense(150, activation='relu'))
+    model.add(Dense(500, activation='relu'))
+    model.add(Dense(300, activation='elu'))
+    model.add(Dense(300, activation='elu'))
+    model.add(Dense(300, activation='relu'))
+    model.add(Dense(500, activation='relu'))
     model.add(Dense(10, activation='relu'))
     model.add(Dense(1))
 
     # 3. compile, fit  
     model.compile(loss='mse', optimizer='adam')
-    model.fit(df_train_X_train, df_train_y_train, epochs=500, batch_size=batchsize, verbose=0)
+    model.fit(df_train_X_train, df_train_y_train, epochs=100, batch_size=700, verbose=2, validation_split=0.4)
 
     # 4. predict
     y_pred = model.predict(df_train_X_test)
@@ -62,19 +69,10 @@ def auto(batchsize):
     print("MSE : ",model.evaluate(df_train_X_test, df_train_y_test))
 
     print("RMSE : ", rmse)
-    
-    for i in y_pred:
-        if i < 0:
-            return 999
-    
     rmsle = RMSLE(df_train_y_test, y_pred)
     print("RMSLE : ", rmsle)
-    
     return rmsle
-m = []
-for i in range(5000,100, -100):
-    a = auto(700)
-    if a < 1.35:
-        m.append({a, i})
-        np.savetxt('test_kaggle_bike.csv', m, fmt='%s', delimiter=', ')
-        
+
+while True:
+    if (auto() < 1.23):
+        break
