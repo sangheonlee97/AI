@@ -27,7 +27,7 @@ df_train = df_train.drop(['registered'], axis=1)
 df_train_X = df_train.drop(['count'], axis=1)
 df_train_y = df_train['count']
 
-df_train_X_train, df_train_X_test, df_train_y_train, df_train_y_test = train_test_split(df_train_X, df_train_y, test_size=0.2, shuffle=0)
+df_train_X_train, df_train_X_test, df_train_y_train, df_train_y_test = train_test_split(df_train_X, df_train_y, test_size=0.23, shuffle=1, random_state=6544)
 
 # 2. modeling
 model = Sequential()
