@@ -38,6 +38,7 @@ plt.xlabel('에폭')
 plt.title('당뇨 로스', fontsize=30)
 plt.ylabel('로스')
 plt.legend(loc = 'upper right')
+plt.ylim(2500, 10000)
 plt.grid()
 
 plt.show()
