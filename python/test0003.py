@@ -1,6 +1,11 @@
-a = [1,1,3,3,4,'sadlfsajdlf', 'asdfdsf']
+t1 = (1) 
+t2 = (1,)
 
-print(a)
+if t1 == t2 :
+    print("dd")
+else:
+    print("ss")
+    
+print(t1)
 
-a[5] = 'sadlfhja;dlfasfdlasfjdkasfjasd;lfdsaf'
-print(a)
+print(t2)

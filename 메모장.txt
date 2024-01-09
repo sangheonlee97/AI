@@ -47,3 +47,4 @@ model.fit( verbose= )   : verbose=0 : 침묵
 
 train_test_split 에서 True, False 는 0,1 로 대체 불가
 fit 단계에서 validation_split으로 val데이터 분리 가능
+fit 단계에서 loss의 최소값이 여러번 갱신이 되지 않을 경우, 과적합이 오기전에 최대한 loss가 낮을 때 fit을 멈추는 것을 early_stopping 이라고 한다.
