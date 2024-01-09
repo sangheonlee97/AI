@@ -45,8 +45,8 @@ import time
 start_time = time.time()
 
 from keras.callbacks import EarlyStopping
-es = EarlyStopping(monitor='auto',
-                    mode='min',  # 멈추는 기준
+es = EarlyStopping(monitor='val_loss', 
+                    mode='min',   # 멈추는 기준 : min, max, auto
                     patience=10 , # 몇번 참을거야
                     verbose=1)
 
