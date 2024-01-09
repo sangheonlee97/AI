@@ -23,3 +23,32 @@ batch_size는 데이터 셋을 모델에 나누어 넣을 때, 그 데이터의 
 2024.01.04
 데이터셋을 train 데이터와 test 데이터로 나눌 때, 데이터의 범위를 줄이지 않도록 하는게 좋다.
 범위가 좁아지면 범위 밖의 값을 예측하기 어려워진다. (아마 train_test_split 함수에서 shuffle이 default인 이유?)
+
+//////////////////////////
+2024.01.09
+오늘까지 배운것 요약 :
+1. 데이터 준비
+csv 파일을 pd.dataframe으로 받아준다.
+컬럼에 이상한게 있는지, 인덱스는 잘 되있는지 확인 후 처리
+결측치 처리
+
+2. 모델링
+모델 생성 후 히든 레이어를 만든다.
+활성화 함수로는 대게 'relu'함수(x가 음수일 때, y는 0)를 사용.
+
+3. 컴파일, 훈련
+모델을 컴파일한다. 구하고자 하는 target 값에 따라 loss를 측정하는 산술방식을 조정한다.
+훈련시킨다. 데이터는 train, validation, test로 나누어 그 중 train과 validation 데이터로 학습시킨다.
+validation과 test 데이터는 모델 학습에 영향을 끼치지 않지만, validation 데이터는 간접적으로 영향을 준다.
+학습 반복횟수(epoch)와 입력데이터를 나누어 넣는 단위(batch_size), train data를 validation으로 split하는 비율(validation_split)등을 하이퍼 파라미터 튜닝한다.
+콜백함수로 early_stopping을 사용할 수 있다.
+early_stopping은 무슨 값을 기준으로 판단할지(monitor)와 어떤 방식으로 판단할지(mode), 그 최대(소) 값이 나온 후 몇번 더 판단할지(patience)를 인자로 지정해준다.
+
+4. 평가, 예측
+학습시킨 모델의 evaluate 메소드를 통해 loss 값을 구한다.
+predict 메소드 함수로 원하는 값을 예측한다.
+이 예측 한 값과 실제 데이터와의 비교로 loss를 구하는데, 다양한 평가 산식으로 값을 뽑는다.
+
+5. 그 외
+데이터 전처리나 평가를 할 때, 좀 더 가독성을 높이기 위해 시각화 처리를 하면 좋다.
+시각화는 matplotlib.pyplot의 plot(선), scatter(점), legend(이름표), title(제목) 등 등의 함수를 사용한다.
