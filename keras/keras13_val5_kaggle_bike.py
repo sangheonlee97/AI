@@ -27,24 +27,23 @@ df_train = df_train.drop(['registered'], axis=1)
 df_train_X = df_train.drop(['count'], axis=1)
 df_train_y = df_train['count']
 
-df_train_X_train, df_train_X_test, df_train_y_train, df_train_y_test = train_test_split(df_train_X, df_train_y, test_size=0.23, shuffle=False, random_state=6544)
+df_train_X_train, df_train_X_test, df_train_y_train, df_train_y_test = train_test_split(df_train_X, df_train_y, test_size=0.4, shuffle=False, random_state=6544)
 
 # 2. modeling
 model = Sequential()
 model.add(Dense(10, input_dim=8, activation='relu'))
-model.add(Dense(15, activation='relu'))
-model.add(Dense(10, activation='relu'))
-model.add(Dense(10, activation='relu'))
-model.add(Dense(10, activation='relu'))
-model.add(Dense(10, activation='relu'))
-model.add(Dense(10, activation='relu'))
-model.add(Dense(10, activation='relu'))
+model.add(Dense(150, activation='relu'))
+model.add(Dense(500, activation='relu'))
+model.add(Dense(300, activation='elu'))
+model.add(Dense(300, activation='elu'))
+model.add(Dense(300, activation='relu'))
+model.add(Dense(500, activation='relu'))
 model.add(Dense(10, activation='relu'))
 model.add(Dense(1))
 
 # 3. compile, fit  
 model.compile(loss='mse', optimizer='adam')
-model.fit(df_train_X_train, df_train_y_train, epochs=500, batch_size=700, verbose=2, validation_split=0.2)
+model.fit(df_train_X_train, df_train_y_train, epochs=100, batch_size=700, verbose=2, validation_split=0.4)
 
 # 4. predict
 y_pred = model.predict(df_train_X_test)
