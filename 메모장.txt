@@ -42,3 +42,8 @@ model.fit( verbose= )   : verbose=0 : 침묵
                           verbose=1 : 디폴트
                           verbose=2 : 프로그래스바 삭제
                           verbose=나머지 : epoch 만 나옴
+
+//
+
+train_test_split 에서 True, False 는 0,1 로 대체 불가
+fit 단계에서 validation_split으로 val데이터 분리 가능
