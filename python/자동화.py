@@ -6,7 +6,10 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import r2_score, mean_squared_log_error, mean_squared_error
 path = "C:\\Study\\_data\\kaggle\\bike\\"
 
-
+def RMSE(y_test, y_predict):
+    return np.sqrt(mean_squared_error(y_test, y_predict))
+def RMSLE(y_test, y_predict):
+    return np.sqrt(mean_squared_log_error(y_test, y_predict))
 # 1. data
 df_train = pd.read_csv(path + "train.csv", index_col=0)
 df_test = pd.read_csv(path + "test.csv", index_col=0)
@@ -28,16 +31,14 @@ df_train_X = df_train.drop(['count'], axis=1)
 df_train_y = df_train['count']
 
 df_train_X_train, df_train_X_test, df_train_y_train, df_train_y_test = train_test_split(df_train_X, df_train_y, test_size=0.4, shuffle=False, random_state=6544)
-
-
 def auto():
     # 2. modeling
     model = Sequential()
     model.add(Dense(10, input_dim=8, activation='relu'))
     model.add(Dense(150, activation='relu'))
     model.add(Dense(500, activation='relu'))
-    model.add(Dense(300, activation='elu'))
-    model.add(Dense(300, activation='elu'))
+    model.add(Dense(300, activation='relu'))
+    model.add(Dense(300, activation='relu'))
     model.add(Dense(300, activation='relu'))
     model.add(Dense(500, activation='relu'))
     model.add(Dense(10, activation='relu'))
@@ -45,10 +46,19 @@ def auto():
 
     # 3. compile, fit  
     model.compile(loss='mse', optimizer='adam')
-    model.fit(df_train_X_train, df_train_y_train, epochs=100, batch_size=700, verbose=2, validation_split=0.4)
+
+    from keras.callbacks import EarlyStopping
+    es = EarlyStopping(monitor='val_loss', mode='min', patience=100, verbose=1, restore_best_weights=True)
+
+    hist = model.fit(df_train_X_train, df_train_y_train, epochs=100000000, batch_size=700, verbose=2, validation_split=0.4, callbacks=[es])
 
     # 4. predict
     y_pred = model.predict(df_train_X_test)
+    idx=0
+    for i in y_pred:
+        if i < 0:
+            y_pred[idx] = 999999999
+        idx += 1
     r2 = r2_score(df_train_y_test, y_pred)
     print("r2 score : ",r2)
 
@@ -57,13 +67,10 @@ def auto():
     df_sub['count'] = y_sub
     print("음수 갯수 : ", df_sub['count'][df_sub['count']<0].count())
 
-    df_sub.to_csv(path + "submission.csv", index=False)
+    df_sub.to_csv(path + "submission_0109.csv", index=False)
 
 
-    def RMSE(y_test, y_predict):
-        return np.sqrt(mean_squared_error(y_test, y_predict))
-    def RMSLE(y_test, y_predict):
-        return np.sqrt(mean_squared_log_error(y_test, y_predict))
+
         
     rmse = RMSE(df_train_y_test, y_pred)
     print("MSE : ",model.evaluate(df_train_X_test, df_train_y_test))
@@ -71,8 +78,29 @@ def auto():
     print("RMSE : ", rmse)
     rmsle = RMSLE(df_train_y_test, y_pred)
     print("RMSLE : ", rmsle)
+    
     return rmsle
-
-while True:
-    if (auto() < 1.23):
+idx = 0
+for i in range(10000000000):
+    a = auto()
+    if a < 1.24:
+        print(idx)
         break
+    idx += 1
+# print("RMSLE : ", rmsle)
+# print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+# print(hist.history)
+# import matplotlib.pyplot as plt
+# plt.rcParams['font.family'] ='Malgun Gothic'
+# plt.rcParams['axes.unicode_minus'] =False
+
+# plt.figure(figsize=(50, 30))
+# plt.plot(hist.history['loss'], color='red', label='loss', marker='.')
+# plt.plot(hist.history['val_loss'], color='blue', label='val_loss', marker='.')
+# plt.xlabel('에폭')
+# plt.title('캐글 자전거 로스', fontsize=30)
+# plt.ylabel('로스')
+# plt.legend(loc = 'upper right')
+# plt.grid()
+# # plt.ylim(0, 1000)
+# plt.show()
