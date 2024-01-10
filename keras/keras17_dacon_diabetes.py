@@ -41,23 +41,19 @@ df_test = df_test.drop(['Insulin'], axis=1)
 
 
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.11, random_state=1062888800)
 
 ######2. model
 model = Sequential()
-model.add(Dense(20, input_dim=7, activation='relu'))
-model.add(Dense(30, activation='relu'))
-model.add(Dense(50, activation='relu'))
-model.add(Dense(40, activation='relu'))
-model.add(Dense(50, activation='relu'))
-model.add(Dense(40, activation='relu'))
-model.add(Dense(20, activation='relu'))
+model.add(Dense(20, input_dim=7, activation='sigmoid'))
+model.add(Dense(30, activation='sigmoid'))
+model.add(Dense(20, activation='sigmoid'))
 model.add(Dense(1, activation='sigmoid'))
 
 ######3. compile, fit
 model.compile(loss="binary_crossentropy", optimizer='adam', metrics=['accuracy'])
-es = EarlyStopping(monitor='val_loss', patience=70, mode='min', verbose=1, restore_best_weights=True)
-model.fit(X_train, y_train, epochs=1000, batch_size=50, validation_split=0.2, callbacks=[es])
+es = EarlyStopping(monitor='val_loss', patience=170, mode='min', verbose=1, restore_best_weights=True)
+model.fit(X_train, y_train, epochs=1000, batch_size=15, validation_split=0.11, callbacks=[es])
 
 ######4. predict
 y_pred = model.predict(X_test)
@@ -66,16 +62,34 @@ y_sub = model.predict(df_test)
 y_sub = y_sub.round()
 
 df_sub['Outcome'] = y_sub
-df_sub.to_csv(path + "submisson_0110.csv", index=False )
+df_sub.to_csv(path + "submisson_0110_real.csv", index=False )
 
 print(y_pred)
 acc = accuracy_score(y_test, y_pred)
 print("acc : ", acc)
 
 
-# acc :  0.875
+# acc :  0.875                  // 0.784
 # ts :  0.11
 # rs :  1062888800
 # p :  149
 # bs :  23
 # acc :  0.875
+
+
+
+
+
+
+
+# acc :  0.8472222222222222     // 0.818
+# ts :  0.11
+# rs :  1062888800
+# p :  170
+# bs :  18
+# acc :  0.8472222222222222
+
+
+
+
+

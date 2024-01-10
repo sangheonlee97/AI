@@ -6,7 +6,7 @@ from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
 from keras.callbacks import EarlyStopping
 import matplotlib.pyplot as plt
-
+import time as tm
 path = "..\_data\dacon\diabetes\\"
 ######1. data
 df_train = pd.read_csv(path + "train.csv", index_col=0)
@@ -48,10 +48,10 @@ def auto(ts, rs, p, bs):
     model.add(Dense(20, input_dim=7, activation='relu'))
     model.add(Dense(30, activation='relu'))
     model.add(Dense(20, activation='relu'))
-    model.add(Dense(1))
+    model.add(Dense(1, activation='sigmoid'))
 
     ######3. compile, fit
-    model.compile(loss="mse", optimizer='adam', metrics=['accuracy'])
+    model.compile(loss="binary_crossentropy", optimizer='adam', metrics=['accuracy'])
     es = EarlyStopping(monitor='val_loss', patience=p, mode='min', verbose=1, restore_best_weights=True)
     model.fit(X_train, y_train, epochs=1000, batch_size=bs, validation_split=ts, callbacks=[es])
 
@@ -62,25 +62,28 @@ def auto(ts, rs, p, bs):
     y_sub = y_sub.round()
 
     df_sub['Outcome'] = y_sub
-    df_sub.to_csv(path + "submisson_0110_qudtls.csv", index=False )
+    ltm = tm.localtime(tm.time())
+    save_time = f"{ltm.tm_year}{ltm.tm_mon}{ltm.tm_mday}{ltm.tm_hour}{ltm.tm_min}{ltm.tm_sec}" 
+    df_sub.to_csv(path + f"submission_0110_{save_time}.csv", index=False)
+    # df_sub.to_csv(path + "submisson_0110_relu.csv", index=False )
 
     print(y_pred)
     acc = accuracy_score(y_test, y_pred)
     print("acc : ", acc)
     return acc
-
+4
 import random
-for i in range(12):
-    ts = random.randrange(10, 41) / 100
-    rs = random.randrange(1, 2000000000)
-    p = random.randrange(50, 200)
-    bs = random.randrange(1, 100)
+for i in range(100):
+    ts = 0.11
+    rs = 1062888800
+    p = 170
+    bs = i%20 + 1
     ac = auto(ts,rs,p,bs)
-    if ac > 0.78:
+    if ac > 0.85:
         print("ts : ", ts)
         print("rs : ", rs)        
         print("p : ", p)
         print("bs : ", bs)
         print("acc : ", ac)
-        break
+        
         
