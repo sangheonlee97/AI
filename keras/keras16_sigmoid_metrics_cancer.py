@@ -5,15 +5,78 @@ from keras.layers import Dense
 from sklearn.model_selection import train_test_split
 from keras.callbacks import EarlyStopping
 from sklearn.metrics import r2_score
+import pandas as pd
 #1. data
 datasets = load_breast_cancer()
 # print(datasets.DESCR)
 # print(datasets.feature_names)
 
 X = datasets.data
-y = datasets.target         # (569, 30)
+y = datasets.target        # (569, 30)
 print(X.shape, y.shape)     # (569, )
+######################################
+# print(np.unique(y)) # [0 1] ## np.unique(y, return_counts=True)
+# pd_y = pd.DataFrame(y)
+# print(pd_y)
+# print("0 : ", pd_y[pd_y == 0].count())
+# print("1 : ", pd_y[pd_y == 1].count())
+######################################
+a1 = np.where(y==0)
+a2 = np.where(y==1)
+print("0 : ", len(a1[0]) )
+print("1 : ", len(a2[0]) )
 
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=42)
+
+#2. model
+model = Sequential()
+model.add(Dense(23, input_dim=30, activation='sigmoid'))
+model.add(Dense(30, activation='sigmoid'))
+model.add(Dense(30, activation='sigmoid'))
+model.add(Dense(30, activation='sigmoid'))
+model.add(Dense(1, activation='sigmoid'))
+
+#3. compile, fit
+model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+
+es = EarlyStopping(monitor='val_accuracy', mode='max', patience=70, verbose=1, restore_best_weights=True)
+
+model.fit(X_train, y_train, epochs=1000, validation_split=0.1, callbacks=[es])
+
+#4. evaluate, pred
+y_pred = model.predict(X_test)
+
+
+
+idx=0
+for i in y_pred:
+    if 3-i > 2.5:
+        y_pred[idx] = 0
+    else:
+        y_pred[idx] = 1
+    idx += 1
+loss = model.evaluate(X_test, y_test)
+r2 = r2_score(y_test, y_pred)
+
+print(y_pred)  
+print("loss : ", loss)
+print("r2 : ", r2)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+''' 회귀 모델
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=42)
 
 
@@ -111,4 +174,4 @@ print("r2 : ", r2)
 #  [1.]
 #  [1.]
 #  [1.]
-#  [1.]]
+#  [1.]]'''
