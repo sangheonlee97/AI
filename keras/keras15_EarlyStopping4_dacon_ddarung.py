@@ -120,7 +120,7 @@ y_t = train_csv['count']
         
 
 
-X_train, X_test, y_train, y_test = train_test_split(X_t, y_t, test_size=0.15, random_state=242343243)
+X_train, X_test, y_train, y_test = train_test_split(X_t, y_t, test_size=0.2, random_state=242343243)
 print(X_train.shape, X_test.shape)
 print(y_train.shape, y_test.shape)
 
@@ -128,45 +128,52 @@ print(y_train.shape, y_test.shape)
 # 2. model
 
 model = Sequential()
-model.add(Dense(23, input_dim=9))
-model.add(Dense(30))
-model.add(Dense(20))
-model.add(Dense(13))
-model.add(Dense(20))
+model.add(Dense(23, input_dim=9, activation='relu'))
+model.add(Dense(30, activation='relu'))
+model.add(Dense(50, activation='relu'))
+model.add(Dense(30, activation='relu'))
+model.add(Dense(50, activation='relu'))
 model.add(Dense(1))
 
 # 3. compile
 model.compile(loss='mse', optimizer='adam')
 
 from keras.callbacks import EarlyStopping
-es = EarlyStopping(monitor='val_loss', mode='min', patience=50, verbose=1)
-hist = model.fit(X_train, y_train, epochs=1000, batch_size=20, validation_split=0.2, callbacks=[es])
+es = EarlyStopping(monitor='val_loss', mode='min', patience=100, verbose=1, restore_best_weights=True)
+hist = model.fit(X_train, y_train, epochs=10000, batch_size=50, validation_split=0.2, callbacks=[es])
 
 # 4. evaluate, predict
 y_submit = model.predict(test_csv)
-# model.evaluate(X_test, y_test)
-# r2 = r2_score(y_test, y_pred)
-# print("r2 : ", r2)
+y_pred = model.predict(X_test)
+model.evaluate(X_test, y_test)
 
 ####### submission.csv 만들기 ( count 컬럼에 값만 넣어주면 된다) ##########
 submission_csv['count'] = y_submit
 
 # print(submission_csv[submission_csv['count'].isna()])
+def RMSE(y_test, y_predict):
+    return np.sqrt(mean_squared_error(y_test, y_predict))
+rmse = RMSE(y_test, y_pred)
+print("RMSE : ", rmse)
+r2 = r2_score(y_test, y_pred)
+print("r2 : ", r2)
 
-submission_csv.to_csv(path + "submission_0109_1.csv", index=False)
 
 
-import matplotlib.pyplot as plt
-plt.rcParams['font.family'] ='Malgun Gothic'
-plt.rcParams['axes.unicode_minus'] =False
+submission_csv.to_csv(path + "submission_0110_1.csv", index=False)
 
-plt.figure(figsize=(50, 30))
-plt.plot(hist.history['loss'], color='red', label='loss', marker='.')
-plt.plot(hist.history['val_loss'], color='blue', label='val_loss', marker='.')
-plt.xlabel('에폭')
-plt.title('따릉이 로스', fontsize=30)
-plt.ylabel('로스')
-plt.legend(loc = 'upper right')
-plt.grid()
-# plt.ylim(0, 1000)
-plt.show()
+
+# import matplotlib.pyplot as plt
+# plt.rcParams['font.family'] ='Malgun Gothic'
+# plt.rcParams['axes.unicode_minus'] =False
+
+# plt.figure(figsize=(50, 30))
+# plt.plot(hist.history['loss'], color='red', label='loss', marker='.')
+# plt.plot(hist.history['val_loss'], color='blue', label='val_loss', marker='.')
+# plt.xlabel('에폭')
+# plt.title('따릉이 로스', fontsize=30)
+# plt.ylabel('로스')
+# plt.legend(loc = 'upper right')
+# plt.grid()
+# # plt.ylim(0, 1000)
+# plt.show()

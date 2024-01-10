@@ -45,9 +45,9 @@ model.add(Dense(1))
 model.compile(loss='mse', optimizer='adam')
 
 from keras.callbacks import EarlyStopping
-es = EarlyStopping(monitor='val_loss', mode='min', patience=10, verbose=1)
+es = EarlyStopping(monitor='val_loss', mode='min', patience=70, verbose=1, restore_best_weights=True)
 
-hist = model.fit(df_train_X_train, df_train_y_train, epochs=100, batch_size=700, verbose=2, validation_split=0.4, callbacks=[es])
+hist = model.fit(df_train_X_train, df_train_y_train, epochs=1000, batch_size=700, verbose=2, validation_split=0.4, callbacks=[es])
 
 # 4. predict
 y_pred = model.predict(df_train_X_test)
