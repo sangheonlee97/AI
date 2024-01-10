@@ -40,47 +40,35 @@ X = X.drop(['Insulin'], axis=1)
 df_test = df_test.drop(['Insulin'], axis=1)
 
 
-def auto(ts, rs, p, bs):
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=ts, random_state=rs)
 
-    ######2. model
-    model = Sequential()
-    model.add(Dense(20, input_dim=7, activation='relu'))
-    model.add(Dense(30, activation='relu'))
-    model.add(Dense(20, activation='relu'))
-    model.add(Dense(1))
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
-    ######3. compile, fit
-    model.compile(loss="mse", optimizer='adam', metrics=['accuracy'])
-    es = EarlyStopping(monitor='val_loss', patience=p, mode='min', verbose=1, restore_best_weights=True)
-    model.fit(X_train, y_train, epochs=1000, batch_size=bs, validation_split=ts, callbacks=[es])
+######2. model
+model = Sequential()
+model.add(Dense(20, input_dim=7, activation='relu'))
+model.add(Dense(30, activation='relu'))
+model.add(Dense(50, activation='relu'))
+model.add(Dense(40, activation='relu'))
+model.add(Dense(50, activation='relu'))
 
-    ######4. predict
-    y_pred = model.predict(X_test)
-    y_pred = y_pred.round()
-    y_sub = model.predict(df_test)
-    y_sub = y_sub.round()
+model.add(Dense(40, activation='relu'))
+model.add(Dense(20, activation='relu'))
+model.add(Dense(1, activation='sigmoid'))
 
-    df_sub['Outcome'] = y_sub
-    df_sub.to_csv(path + "submisson_0110_qudtls.csv", index=False )
+######3. compile, fit
+model.compile(loss="binary_crossentropy", optimizer='adam', metrics=['accuracy'])
+es = EarlyStopping(monitor='val_loss', patience=70, mode='min', verbose=1, restore_best_weights=True)
+model.fit(X_train, y_train, epochs=1000, batch_size=50, validation_split=0.2, callbacks=[es])
 
-    print(y_pred)
-    acc = accuracy_score(y_test, y_pred)
-    print("acc : ", acc)
-    return acc
+######4. predict
+y_pred = model.predict(X_test)
+y_pred = y_pred.round()
+y_sub = model.predict(df_test)
+y_sub = y_sub.round()
 
-import random
-for i in range(12):
-    ts = random.randrange(10, 41) / 100
-    rs = random.randrange(1, 2000000000)
-    p = random.randrange(50, 200)
-    bs = random.randrange(1, 100)
-    ac = auto(ts,rs,p,bs)
-    if ac > 0.78:
-        print("ts : ", ts)
-        print("rs : ", rs)        
-        print("p : ", p)
-        print("bs : ", bs)
-        print("acc : ", ac)
-        break
-        
+df_sub['Outcome'] = y_sub
+df_sub.to_csv(path + "submisson_0110.csv", index=False )
+
+print(y_pred)
+acc = accuracy_score(y_test, y_pred)
+print("acc : ", acc)
