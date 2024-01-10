@@ -53,3 +53,4 @@ fit 단계에서 loss의 최소값이 여러번 갱신이 되지 않을 경우, 
 
 pd.value_counts() : 갯수 세줌
 이진 분류 문제에서 loss='binary_crossentropy' , output_layer에선 activaion='sigmoid' !@!@!@!!
+다중 분류 문제에서 loss='categorical_crossentropy', output_layer에서 activation='softmax' @$#$@#

@@ -50,7 +50,6 @@ model.add(Dense(30, activation='relu'))
 model.add(Dense(50, activation='relu'))
 model.add(Dense(40, activation='relu'))
 model.add(Dense(50, activation='relu'))
-
 model.add(Dense(40, activation='relu'))
 model.add(Dense(20, activation='relu'))
 model.add(Dense(1, activation='sigmoid'))
@@ -72,3 +71,11 @@ df_sub.to_csv(path + "submisson_0110.csv", index=False )
 print(y_pred)
 acc = accuracy_score(y_test, y_pred)
 print("acc : ", acc)
+
+
+# acc :  0.875
+# ts :  0.11
+# rs :  1062888800
+# p :  149
+# bs :  23
+# acc :  0.875
