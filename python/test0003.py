@@ -1,11 +1,10 @@
-t1 = (1) 
-t2 = (1,)
+import pandas as pd
+import numpy as np
 
-if t1 == t2 :
-    print("dd")
-else:
-    print("ss")
-    
-print(t1)
-
-print(t2)
+a = pd.DataFrame(range(5))
+print(a)
+a = a.T
+print(a)
+a[4] = 5
+a = a.T
+print(a)
