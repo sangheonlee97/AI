@@ -67,7 +67,8 @@ df_sub.to_csv(path + "submisson_0110_real.csv", index=False )
 print(y_pred)
 acc = accuracy_score(y_test, y_pred)
 print("acc : ", acc)
-
+# print(type(y_sub))
+# print(y_sub.shape)
 
 # acc :  0.875                  // 0.784
 # ts :  0.11
