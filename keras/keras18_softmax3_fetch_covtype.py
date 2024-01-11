@@ -30,19 +30,22 @@ print(pd.value_counts(y))
 
 
 ######### sklearn.preprocessing의 OneHotEncoder###########
-# y = y.reshape(-1, 1)
-# ohe = OneHotEncoder(sparse=False)
-# y = ohe.fit_transform(y)
-# print(y.shape)
+y = y.reshape(-1, 1)
+ohe = OneHotEncoder(sparse=False)
+y = ohe.fit_transform(y)
+print(y.shape)
 ############################################
 
 
 ######### keras.utils의 to_categorical##########
-print(y)
-print(pd.value_counts(y-1))
-y = to_categorical(y-1)
+# print(y)
+# print(pd.value_counts(y-1))
+# y = to_categorical(y)
+# print(y.shape)      # (581012, 7)
 
-print(y.shape)      # (581012, 7)
+# # y = y[:,1:]
+
+# print(y.shape)      # (581012, 7)
 
 # y = to_categorical(y)
 # print(y.shape)      # (581012, 8)
@@ -64,29 +67,28 @@ print(y.shape)      # (581012, 7)
 
 
 
-
-
-'''
 # model = Sequential()
 # model.add(Dense(100, input_dim=54))
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42, stratify=y)
 
 model = Sequential()
-model.add(Dense(30, input_dim=54))
-model.add(Dense(50))
-model.add(Dense(50))
-model.add(Dense(30))
-model.add(Dense(10))
+model.add(Dense(30, input_dim=54, activation='relu'))
+model.add(Dense(50, activation='relu'))
+model.add(Dense(50, activation='relu'))
+model.add(Dense(30, activation='relu'))
+model.add(Dense(50, activation='relu'))
+model.add(Dense(30, activation='relu'))
+model.add(Dense(10, activation='relu'))
 model.add(Dense(7, activation='softmax'))
 
-model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
-es = EarlyStopping(monitor='val_loss', mode='min', patience=50, verbose=1, restore_best_weights=True)
-model.fit(X_train, y_train, epochs=1000,validation_split=0.2, batch_size=50000, callbacks=[es])
+model.compile(loss='categorical_crossentropy', optimizer='adam')
+es = EarlyStopping(monitor='val_loss', mode='min', patience=100, verbose=1, restore_best_weights=True)
+model.fit(X_train, y_train, epochs=100000,validation_split=0.3, batch_size=100000, callbacks=[es])
 
 y_pred = model.predict(X_test)
 y_pred = np.argmax(y_pred, axis=1)
 y_test = np.argmax(y_test, axis=1)
 acc = accuracy_score(y_test, y_pred)
+
 print ("acc : ", acc)
-'''
