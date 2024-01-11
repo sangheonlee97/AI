@@ -54,3 +54,8 @@ fit 단계에서 loss의 최소값이 여러번 갱신이 되지 않을 경우, 
 pd.value_counts() : 갯수 세줌
 이진 분류 문제에서 loss='binary_crossentropy' , output_layer에선 activaion='sigmoid' !@!@!@!!
 다중 분류 문제에서 loss='categorical_crossentropy', output_layer에서 activation='softmax' @$#$@#
+
+//
+
+train_test_split 에서 stratify= 'target' 으로 스플릿할 때 target 값의 비율을 맞춰줄 수 있다.
+softmax를 통해 나온 값과 onehotencoding한 값은 np.argmax( 값, axis=1) 를 통해 타겟 값으로 바꿔준다.

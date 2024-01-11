@@ -20,6 +20,8 @@ datasets = load_iris()
 X = datasets.data
 y = datasets.target
 
+print(datasets.DESCR)
+
 # print(X.shape, y.shape)     # (150, 4) (150,)
 # print(np.unique(y, return_counts=True))
 # print(pd.value_counts(y))
@@ -27,8 +29,9 @@ y = datasets.target
 ######### sklearn.preprocessing의 OneHotEncoder###########
 y = y.reshape(-1, 1)
 ohe = OneHotEncoder(sparse=False)
-print(type(ohe.fit(y)))
-y = ohe.transform(y)
+# ohe.fit(y)
+# y = ohe.transform(y)
+y = ohe.fit_transform(y)
 ############################################
 
 
@@ -42,8 +45,8 @@ y = ohe.transform(y)
 #####################################
 
 
-'''
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y )
 
 model = Sequential()
 model.add(Dense(20, input_dim=4))
@@ -55,12 +58,19 @@ model.add(Dense(3, activation='softmax'))
 
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 es = EarlyStopping(monitor='val_loss', patience=130, mode='min', verbose=1, restore_best_weights=True)
-model.fit(X_train, y_train, epochs=10000, batch_size=5, validation_split=0.3, callbacks=[es])
+model.fit(X_train, y_train, epochs=10000, batch_size=5, validation_split=0.2, callbacks=[es])
 
 
 y_pred = model.predict(X_test)
-model.evaluate(X_test)
-# acc = accuracy_score(y_test, y_pred)
+results = model.evaluate(X_test, y_test)
 
-# print('acc : ', acc)
-'''
+
+# print(y_pred.shape)     # (45, 3)
+
+
+print('loss : ', results[0])
+# print('acc : ', results[1])
+y_test = np.argmax(y_test, axis=1)
+y_pred = np.argmax(y_pred, axis=1)
+acc = accuracy_score(y_test, y_pred)
+print("acc : ", acc)
