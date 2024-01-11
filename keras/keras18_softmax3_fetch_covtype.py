@@ -38,11 +38,21 @@ print(pd.value_counts(y))
 
 
 ######### keras.utils의 to_categorical##########
-y = to_categorical(y)
-print(y.shape)      # (581012, 8)
-y = pd.DataFrame(y)
-y = y.drop(y[0], axis=1)
-print(y.shape)      # (581012, 8)
+print(y)
+print(pd.value_counts(y-1))
+y = to_categorical(y-1)
+
+print(y.shape)      # (581012, 7)
+
+# y = to_categorical(y)
+# print(y.shape)      # (581012, 8)
+###################
+# y = pd.DataFrame(y)
+# y = y.drop(y[0], axis=1)
+# print(y.shape)      # (581012, 7)
+###################
+
+
 ################################################
 
 
@@ -56,7 +66,7 @@ print(y.shape)      # (581012, 8)
 
 
 
-
+'''
 # model = Sequential()
 # model.add(Dense(100, input_dim=54))
 
@@ -79,3 +89,4 @@ y_pred = np.argmax(y_pred, axis=1)
 y_test = np.argmax(y_test, axis=1)
 acc = accuracy_score(y_test, y_pred)
 print ("acc : ", acc)
+'''
