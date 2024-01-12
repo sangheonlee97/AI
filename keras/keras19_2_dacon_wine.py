@@ -1,3 +1,5 @@
+# https://dacon.io/competitions/open/235610/overview/description
+
 import numpy as np
 import pandas as pd
 from keras.models import Sequential
@@ -37,12 +39,6 @@ y = train_csv['quality']
                     # 9       5
                     # Name: count, dtype: int64
 
-idx = 0
-for i in range(11):
-    X.iloc[:, i] = X.iloc[:, i] / max(X.iloc[:, i]) * 100
-for i in range(11):
-    test_csv.iloc[:, i] = test_csv.iloc[:, i] / max(test_csv.iloc[:, i]) * 100
-
 
 ######
 le = LabelEncoder()
@@ -56,7 +52,7 @@ y = pd.get_dummies(y) # 일케하면 0123456 으로 나옴
 # y = to_categorical(y-3)
 print(y.shape)
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, random_state=42, stratify=y)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
 
 
 
@@ -72,7 +68,7 @@ model.add(Dense(7, activation='softmax'))
 
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 es = EarlyStopping(monitor='val_loss', patience=200, mode='min', restore_best_weights=True, verbose=1)
-model.fit(X_train, y_train, validation_split=0.3, epochs=10000, batch_size=700, callbacks=[es])
+model.fit(X_train, y_train, validation_split=0.3, epochs=10000, batch_size=1, callbacks=[es])
 
 y_pred = model.predict(test_csv)
 results = model.evaluate(X_test, y_test)
