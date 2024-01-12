@@ -54,11 +54,18 @@ test_csv['type'] = le.transform(test_csv['type'])
 
 y = pd.get_dummies(y) # 일케하면 0123456 으로 나옴
 # y = to_categorical(y-3)
-print(y.shape)
+print(y)
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, random_state=42, stratify=y)
+print(y_train)
+a = [1,2,3,4,5,4,3,2,1]
+for i, v in enumerate(a):
+    print(i)
+    print(v)
+    print("dfafasdf")
+    
 
-
+'''
 
 model = Sequential()
 model.add(Dense(20, input_dim=12, activation='relu'))
@@ -87,3 +94,4 @@ print("loss : ", results[0])
 print("acc : ", results[1])
 print(y_pred)
 submission_csv.to_csv(path + "submission.csv", index=False)
+'''
