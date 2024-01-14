@@ -5,7 +5,7 @@ from keras.layers import Dense
 from sklearn.model_selection import train_test_split
 from keras.callbacks import EarlyStopping
 from sklearn.metrics import accuracy_score
-
+# 클론 테스트
 path = "..\\_data\\dacon\\iris\\"
 
 train_csv = pd.read_csv(path + "train.csv", index_col='id')
