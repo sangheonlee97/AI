@@ -5,7 +5,7 @@ from keras.layers import Dense
 from keras.callbacks import EarlyStopping
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, f1_score
-from sklearn.preprocessing import LabelEncoder
+from sklearn.preprocessing import LabelEncoder, OneHotEncoder
 path = "..//_data//dacon//daechul//"
 
 ############## 1. data ###############
@@ -18,61 +18,117 @@ sub_csv = pd.read_csv(path + "sample_submission.csv")
 # print(test_csv.shape)  #(64197, 13)
 # train_csv.info()
 
-# print(train_csv['주택소유상태'].value_counts()) # train 데이터에만 "any" 한개 있음,, 
+
 train_csv = train_csv.drop(labels='TRAIN_28730',axis=0) # 주택소유 상태가 any인 row 삭제
 
+X = train_csv.drop(['대출등급'], axis=1)
+y = train_csv['대출등급']
+
+
+
+# print(train_csv['주택소유상태'].value_counts()) # train 데이터에만 "any" 한개 있음,, 
 le_own = LabelEncoder()
-le_own.fit(train_csv['주택소유상태'])
-train_csv['주택소유상태'] = le_own.transform(train_csv['주택소유상태'])
+le_own.fit(X['주택소유상태'])
+X['주택소유상태'] = le_own.transform(X['주택소유상태'])
 test_csv['주택소유상태'] = le_own.transform(test_csv['주택소유상태'])
 
 
 # print(train_csv['대출목적'].value_counts())
 test_csv.iloc[34486,7] = '이사'     # 결혼 -> 이사 로 임의로 바꿈
 le_purpose = LabelEncoder()
-le_purpose.fit(train_csv['대출목적'])
-train_csv['대출목적'] = le_purpose.transform(train_csv['대출목적'])
+le_purpose.fit(X['대출목적'])
+X['대출목적'] = le_purpose.transform(X['대출목적'])
 test_csv['대출목적'] = le_purpose.transform(test_csv['대출목적'])
 
 
 
 # print(train_csv['대출등급'].value_counts())
-le_grade = LabelEncoder()
-le_grade.fit(train_csv['대출등급'])
-train_csv['대출등급'] = le_grade.transform(train_csv['대출등급'])
+# le_grade = LabelEncoder()
+# le_grade.fit(y)
+# y = le_grade.transform(train_csv['대출등급'])
+# y = pd.get_dummies(y)
+# y = pd.array(y)
+# y = y.reshape(-1, 1)
+y = y.values.reshape(-1, 1)
+ohe = OneHotEncoder(sparse=False)
+ohe.fit(y)
+y = ohe.transform(y)
 
 
-# print(train_csv['근로기간'].value_counts()) # 결측치 unknown 5671 개 
+# print(train_csv['근로기간'].value_counts()) # 결측치 unknown 5671 개  , 1 year이 1years 로 오기 돼있는 듯한 데이터 있음,  3도 이씀
 # print(test_csv['근로기간'].value_counts()) # 결측치 unknown 3862 개
 # unknown 도 라벨링 해버릴지.. unknown만 따로 빼서 학습 시킬지 고민 중.
 # 우선 같이 라벨링 시도
+# print(X.value_counts(['근로기간']))
 le_work_period = LabelEncoder()
-le_work_period.fit(train_csv['근로기간'])
-train_csv['근로기간'] = le_work_period.transform(train_csv['근로기간'])
+le_work_period.fit(X['근로기간'])
+X['근로기간'] = le_work_period.transform(X['근로기간'])
+X[X['근로기간'] == 1] = 0   # 1 years를 1year 로 바꿈
+X[X['근로기간'] == 5] = 6   # 3을 3 years 로 바꿈
 test_csv['근로기간'] = le_work_period.transform(test_csv['근로기간'])
+test_csv[test_csv['근로기간'] == 1] = 0 # # 1 years를 1year 로 바꿈
+test_csv[test_csv['근로기간'] == 5] = 6   # 3을 3 years 로 바꿈
+# print(X.value_counts(['근로기간']))
+
+
+
 
 
 # print(train_csv['대출기간'].value_counts()) # 36, 60
 # print(test_csv['대출기간'].value_counts()) # 36, 60
-le_loan_period = LabelEncoder()
-le_loan_period.fit(train_csv['대출기간'])
-train_csv['대출기간'] = le_loan_period.transform(train_csv['대출기간'])
-test_csv['대출기간'] = le_loan_period.transform(test_csv['대출기간'])   
+# le_loan_period = LabelEncoder()
+# le_loan_period.fit(X['대출기간'])
+# X['대출기간'] = le_loan_period.transform(X['대출기간'])
+# test_csv['대출기간'] = le_loan_period.transform(test_csv['대출기간'])
+####################
+X['대출기간'] = X['대출기간'].replace({' 36 months' : 36 , ' 60 months' : 60 }).astype(int)
+test_csv['대출기간'] = test_csv['대출기간'].replace({' 36 months' : 36 , ' 60 months' : 60 }).astype(int)
 
-X = train_csv.drop(['대출등급'], axis=1)
-y = train_csv['대출등급']
+
 
 # print(X.shape)  #(96293, 13)
 # print(y.shape)  #(96293, )
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.15, random_state=42, stratify=y)
+
+
+############### 2. model ################
+model = Sequential()
+model.add(Dense(50, input_dim=13, ))
+model.add(Dense(100))
+model.add(Dense(100))
+model.add(Dense(100))
+model.add(Dense(100))
+model.add(Dense(100))
+model.add(Dense(100))
+model.add(Dense(7, activation='softmax'))
+
+############### 3. compile, fit ############
+model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+es = EarlyStopping(monitor='val_loss', mode='min', patience=300, verbose=1, restore_best_weights=True)
+model.fit(X_train, y_train, epochs=10000, batch_size=10000, validation_split=0.3, callbacks=[es])
+
+############### 4. evaluated, predict ##########
+results = model.evaluate(X_test, y_test)
 
 
 
+y_pred = model.predict(X_test)
+y_pred = ohe.inverse_transform(y_pred)
+y_test = ohe.inverse_transform(y_test)
+f1 = f1_score(y_test, y_pred, average='macro')
+print("loss : ", results[0])
+print("acc : ", results[1])
+print("f1 : ", f1)
+
+y_sub = model.predict(test_csv)
+y_sub = ohe.inverse_transform(y_sub)
+y_sub = pd.DataFrame(y_sub)
 
 
+sub_csv['대출등급'] = y_sub
+# print(sub_csv['대출등급'])
+sub_csv.to_csv(path + "submisson.csv", index=False)
 
-
-# ############### 2. model ################
-# model = Sequential()
-# model.add(Dense(50, input_shape=(13,), activation=))
+# loss :  76.33777618408203
+# acc :  0.40988630056381226
