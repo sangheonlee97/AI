@@ -5,7 +5,7 @@ from keras.layers import Dense
 from keras.callbacks import EarlyStopping
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, f1_score
-from sklearn.preprocessing import LabelEncoder, OneHotEncoder
+from sklearn.preprocessing import LabelEncoder, OneHotEncoder, MinMaxScaler
 path = "..//_data//dacon//daechul//"
 
 ############## 1. data ###############
@@ -76,37 +76,41 @@ test_csv[test_csv['근로기간'] == 5] = 6   # 3을 3 years 로 바꿈
 
 # print(train_csv['대출기간'].value_counts()) # 36, 60
 # print(test_csv['대출기간'].value_counts()) # 36, 60
-# le_loan_period = LabelEncoder()
-# le_loan_period.fit(X['대출기간'])
-# X['대출기간'] = le_loan_period.transform(X['대출기간'])
-# test_csv['대출기간'] = le_loan_period.transform(test_csv['대출기간'])
+le_loan_period = LabelEncoder()
+le_loan_period.fit(X['대출기간'])
+X['대출기간'] = le_loan_period.transform(X['대출기간'])
+test_csv['대출기간'] = le_loan_period.transform(test_csv['대출기간'])
 ####################
-X['대출기간'] = X['대출기간'].replace({' 36 months' : 36 , ' 60 months' : 60 }).astype(int)
-test_csv['대출기간'] = test_csv['대출기간'].replace({' 36 months' : 36 , ' 60 months' : 60 }).astype(int)
+# X['대출기간'] = X['대출기간'].replace({' 36 months' : 36 , ' 60 months' : 60 }).astype(int)
+# test_csv['대출기간'] = test_csv['대출기간'].replace({' 36 months' : 36 , ' 60 months' : 60 }).astype(int)
 
 
 
 # print(X.shape)  #(96293, 13)
 # print(y.shape)  #(96293, )
+mms = MinMaxScaler()
+mms.fit(X)
+X = mms.transform(X)
+test_csv = mms.transform(test_csv)
+
+
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.15, random_state=42, stratify=y)
 
 
 ############### 2. model ################
 model = Sequential()
-model.add(Dense(50, input_dim=13, ))
+model.add(Dense(50, input_dim=13, activation='relu'))
 model.add(Dense(100))
 model.add(Dense(100))
 model.add(Dense(100))
-model.add(Dense(100))
-model.add(Dense(100))
-model.add(Dense(100))
+model.add(Dense(50))
 model.add(Dense(7, activation='softmax'))
 
 ############### 3. compile, fit ############
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
-es = EarlyStopping(monitor='val_loss', mode='min', patience=300, verbose=1, restore_best_weights=True)
-model.fit(X_train, y_train, epochs=10000, batch_size=10000, validation_split=0.3, callbacks=[es])
+es = EarlyStopping(monitor='val_loss', mode='min', patience=200, verbose=1, restore_best_weights=True)
+model.fit(X_train, y_train, epochs=10000, batch_size=10000, validation_split=0.15, callbacks=[es])
 
 ############### 4. evaluated, predict ##########
 results = model.evaluate(X_test, y_test)
