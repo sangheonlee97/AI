@@ -85,7 +85,7 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.15, random
 
 ############### 2. model ################
 model = Sequential()
-model.add(Dense(50, input_dim=13, ))
+model.add(Dense(50, input_dim=13, activation='relu'))
 model.add(Dense(100))
 model.add(Dense(100))
 model.add(Dense(50))
