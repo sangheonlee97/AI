@@ -59,3 +59,11 @@ pd.value_counts() : 갯수 세줌
 
 train_test_split 에서 stratify= 'target' 으로 스플릿할 때 target 값의 비율을 맞춰줄 수 있다.
 softmax를 통해 나온 값과 onehotencoding한 값은 np.argmax( 값, axis=1) 를 통해 타겟 값으로 바꿔준다.
+
+//
+
+히든 레이어를 추가할 때 사용하던, input_dim은 행렬에서만 사용가능한 방식. 앞으로는 input_shape를 사용한다.
+ (3, ) -> (1, )
+ (10, 4) -> (4, )
+ (100, 10, 5) -> (10, 5)
+ (10000, 16, 16, 3) -> (16, 16, 3)
