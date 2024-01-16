@@ -98,7 +98,7 @@ test_csv['대출기간'] = test_csv['대출기간'].replace({' 36 months' : 36 ,
 # f1 :  0.752024962077973
 
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, random_state=3, stratify=y)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=3, stratify=y)
 
 ss = StandardScaler()
 ss.fit(X_train)
@@ -116,12 +116,13 @@ model.add(Dense(21,activation='relu'))
 model.add(Dense(16,activation='relu'))
 model.add(Dense(21,activation='relu'))
 model.add(Dense(7, activation='softmax'))
-model.save("..//_data//_save//dacon_loan.h5")
 
 ############### 3. compile, fit ############
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
-es = EarlyStopping(monitor='val_loss', mode='min', patience=1000, verbose=1, restore_best_weights=True)
-model.fit(X_train, y_train, epochs=100000, batch_size=500, validation_split=0.15, callbacks=[es])
+es = EarlyStopping(monitor='val_loss', mode='min', patience=500, verbose=1, restore_best_weights=True)
+model.fit(X_train, y_train, epochs=100000, batch_size=1000, validation_split=0.3, callbacks=[es])
+
+model.save("..//_data//_save//dacon_loan.h5")
 
 ############### 4. evaluated, predict ##########
 results = model.evaluate(X_test, y_test)
