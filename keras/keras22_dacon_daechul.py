@@ -75,27 +75,33 @@ test_csv[test_csv['근로기간'] == 5] = 6   # 3을 3 years 로 바꿈
 
 
 # print(train_csv['대출기간'].value_counts()) # 36, 60
-# print(test_csv['대출기간'].value_counts()) # 36, 60
-le_loan_period = LabelEncoder()
-le_loan_period.fit(X['대출기간'])
-X['대출기간'] = le_loan_period.transform(X['대출기간'])
-test_csv['대출기간'] = le_loan_period.transform(test_csv['대출기간'])
+# print(test_csv['대출기간'].value_counts()) # 36, 60, 0, 6
+# le_loan_period = LabelEncoder()
+# le_loan_period.fit(X['대출기간'])
+# X['대출기간'] = le_loan_period.transform(X['대출기간'])
+# test_csv['대출기간'] = le_loan_period.transform(test_csv['대출기간'])
 ####################
-# X['대출기간'] = X['대출기간'].replace({' 36 months' : 36 , ' 60 months' : 60 }).astype(int)
-# test_csv['대출기간'] = test_csv['대출기간'].replace({' 36 months' : 36 , ' 60 months' : 60 }).astype(int)
+X['대출기간'] = X['대출기간'].replace({' 36 months' : 36 , ' 60 months' : 60 }).astype(int)
+test_csv['대출기간'] = test_csv['대출기간'].replace({' 36 months' : 36 , ' 60 months' : 60 }).astype(int)
 
 
 
 # print(X.shape)  #(96293, 13)
 # print(y.shape)  #(96293, )
+
 mms = MinMaxScaler()
 mms.fit(X)
 X = mms.transform(X)
 test_csv = mms.transform(test_csv)
 
 
-
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.15, random_state=42, stratify=y)
+
+# mms = MinMaxScaler()
+# mms.fit(X_train)
+# X_train = mms.transform(X_train)
+# X_test = mms.transform(X_test)
+# test_csv = mms.transform(test_csv)
 
 
 ############### 2. model ################
