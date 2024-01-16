@@ -1,89 +1,147 @@
 import numpy as np
 import pandas as pd
-from keras.models import Sequential
+from keras.models import Sequential, save_model
 from keras.layers import Dense
-from sklearn.metrics import accuracy_score
-from sklearn.model_selection import train_test_split
 from keras.callbacks import EarlyStopping
-import matplotlib.pyplot as plt
-import time as tm
-path = "..\_data\dacon\diabetes\\"
-######1. data
-df_train = pd.read_csv(path + "train.csv", index_col=0)
-df_test = pd.read_csv(path + "test.csv", index_col=0)
-df_sub = pd.read_csv(path + "sample_submission.csv")
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, f1_score
+from sklearn.preprocessing import LabelEncoder, OneHotEncoder, MinMaxScaler, StandardScaler
+path = "..//_data//dacon//daechul//"
 
-# print(df_train.shape)   # (652, 9)
-# print(df_test.shape)   # (116, 8)
-# print(df_train.info)
+############## 1. data ###############
 
-X = df_train.drop(['Outcome'], axis=1)
-y = df_train['Outcome']
+train_csv = pd.read_csv(path + "train.csv", index_col='ID')
+# test_csv = pd.read_csv(path + "test.csv", index_col="ID")
+sub_csv = pd.read_csv(path + "sample_submission.csv")
 
-# print(X.shape)      # (652, 8)
-# print(y.shape)      # (652, )
+# print(train_csv.shape)  #(96294, 14)
+# print(test_csv.shape)  #(64197, 13)
+# train_csv.info()
 
 
-# print(X['Pregnancies'][X['Pregnancies']==0].count()) # 87
-# print(X['Glucose'][X['Glucose']==0].count()) # 4
-# print(X['BloodPressure'][X['BloodPressure']==0].count()) # 30
-# print(X['SkinThickness'][X['SkinThickness']==0].count()) # 195
-# print(X['Insulin'][X['Insulin']==0].count()) # 318 결측치가 많은건지, 실제 값이 0인건지 분간이 안됨;
-# print(X['BMI'][X['BMI']==0].count()) # 7
-# print(X['DiabetesPedigreeFunction'][X['DiabetesPedigreeFunction']==0].count()) # 0
-# print(X['Age'][X['Age']==0].count()) # 0
+train_csv = train_csv.drop(labels='TRAIN_28730',axis=0) # 주택소유 상태가 any인 row 삭제
+
+X = train_csv.drop(['대출등급'], axis=1)
+y = train_csv['대출등급']
 
 
-# X = X.drop(['SkinThickness'], axis=1)
-X = X.drop(['Insulin'], axis=1)
-# df_test = df_test.drop(['SkinThickness'], axis=1)
-df_test = df_test.drop(['Insulin'], axis=1)
+
+# print(train_csv['주택소유상태'].value_counts()) # train 데이터에만 "any" 한개 있음,, 
+le_own = LabelEncoder()
+le_own.fit(X['주택소유상태'])
+X['주택소유상태'] = le_own.transform(X['주택소유상태'])
+# test_csv['주택소유상태'] = le_own.transform(test_csv['주택소유상태'])
 
 
-def auto(ts, rs, p, bs):
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=ts, random_state=rs)
+# print(train_csv['대출목적'].value_counts())
+# test_csv.iloc[34486,7] = '이사'     # 결혼 -> 이사 로 임의로 바꿈
+le_purpose = LabelEncoder()
+le_purpose.fit(X['대출목적'])
+X['대출목적'] = le_purpose.transform(X['대출목적'])
+# test_csv['대출목적'] = le_purpose.transform(test_csv['대출목적'])
 
-    ######2. model
+
+
+# print(train_csv['대출등급'].value_counts())
+# le_grade = LabelEncoder()
+# le_grade.fit(y)
+# y = le_grade.transform(train_csv['대출등급'])
+# y = pd.get_dummies(y)
+# y = pd.array(y)
+# y = y.reshape(-1, 1)
+y = y.values.reshape(-1, 1)
+ohe = OneHotEncoder(sparse=False)
+ohe.fit(y)
+y = ohe.transform(y)
+
+
+# print(train_csv['근로기간'].value_counts()) # 결측치 unknown 5671 개  , 1 year이 1years 로 오기 돼있는 듯한 데이터 있음,  3도 이씀
+# print(test_csv['근로기간'].value_counts()) # 결측치 unknown 3862 개
+# unknown 도 라벨링 해버릴지.. unknown만 따로 빼서 학습 시킬지 고민 중.
+# 우선 같이 라벨링 시도
+# print(X.value_counts(['근로기간']))
+le_work_period = LabelEncoder()
+le_work_period.fit(X['근로기간'])
+X['근로기간'] = le_work_period.transform(X['근로기간'])
+X[X['근로기간'] == 1] = 0   # 1 years를 1year 로 바꿈
+X[X['근로기간'] == 5] = 6   # 3을 3 years 로 바꿈
+# test_csv['근로기간'] = le_work_period.transform(test_csv['근로기간'])
+# test_csv[test_csv['근로기간'] == 1] = 0 # # 1 years를 1year 로 바꿈
+# test_csv[test_csv['근로기간'] == 5] = 6   # 3을 3 years 로 바꿈
+# print(X.value_counts(['근로기간']))
+
+
+
+
+
+# print(train_csv['대출기간'].value_counts()) # 36, 60
+# print(test_csv['대출기간'].value_counts()) # 36, 60, 0, 6
+# le_loan_period = LabelEncoder()
+# le_loan_period.fit(X['대출기간'])
+# X['대출기간'] = le_loan_period.transform(X['대출기간'])
+# test_csv['대출기간'] = le_loan_period.transform(test_csv['대출기간'])
+####################
+X['대출기간'] = X['대출기간'].replace({' 36 months' : 36 , ' 60 months' : 60 }).astype(int)
+# test_csv['대출기간'] = test_csv['대출기간'].replace({' 36 months' : 36 , ' 60 months' : 60 }).astype(int)
+
+
+
+# print(X.shape)  #(96293, 13)
+# print(y.shape)  #(96293, )
+
+# mms = MinMaxScaler()
+# mms.fit(X)
+# X = mms.transform(X)
+# test_csv = mms.transform(test_csv)
+# loss :  0.6678425073623657
+# acc :  0.798601508140564
+# f1 :  0.752024962077973
+
+def auto(ts, vs):
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=ts, random_state=3, stratify=y)
+
+    ss = StandardScaler()
+    ss.fit(X_train)
+    X_train = ss.transform(X_train)
+    X_test = ss.transform(X_test)
+    # test_csv = ss.transform(test_csv)
+
+
+    ############### 2. model ################
     model = Sequential()
-    model.add(Dense(20, input_dim=7, activation='relu'))
-    model.add(Dense(30, activation='relu'))
-    model.add(Dense(20, activation='relu'))
-    model.add(Dense(1, activation='sigmoid'))
+    model.add(Dense(19, input_shape= (13, ),activation='relu'))
+    model.add(Dense(97,activation='relu'))
+    model.add(Dense(9,activation='relu'))
+    model.add(Dense(21,activation='relu'))
+    model.add(Dense(16,activation='relu'))
+    model.add(Dense(21,activation='relu'))
+    model.add(Dense(7, activation='softmax')) 
 
-    ######3. compile, fit
-    model.compile(loss="binary_crossentropy", optimizer='adam', metrics=['accuracy'])
-    es = EarlyStopping(monitor='val_loss', patience=p, mode='min', verbose=1, restore_best_weights=True)
-    model.fit(X_train, y_train, epochs=1000, batch_size=bs, validation_split=ts, callbacks=[es])
+    ############### 3. compile, fit ############
+    model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+    es = EarlyStopping(monitor='val_loss', mode='min', patience=100, verbose=1, restore_best_weights=True)
+    model.fit(X_train, y_train, epochs=100000, batch_size=1000, validation_split=vs, callbacks=[es])
 
-    ######4. predict
+    model.save("..//_data//_save//dacon_loan.h5")
+
+    ############### 4. evaluated, predict ##########
+    results = model.evaluate(X_test, y_test)
+
+
+
     y_pred = model.predict(X_test)
-    y_pred = y_pred.round()
-    y_sub = model.predict(df_test)
-    y_sub = y_sub.round()
-
-    df_sub['Outcome'] = y_sub
-    ltm = tm.localtime(tm.time())
-    save_time = f"{ltm.tm_year}{ltm.tm_mon}{ltm.tm_mday}{ltm.tm_hour}{ltm.tm_min}{ltm.tm_sec}" 
-    df_sub.to_csv(path + f"submission_0110_{save_time}.csv", index=False)
-    # df_sub.to_csv(path + "submisson_0110_relu.csv", index=False )
-
-    print(y_pred)
-    acc = accuracy_score(y_test, y_pred)
-    print("acc : ", acc)
-    return acc
-4
+    y_pred = ohe.inverse_transform(y_pred)
+    y_test = ohe.inverse_transform(y_test)
+    f1 = f1_score(y_test, y_pred, average='macro')
+    print("loss : ", results[0])
+    print("acc : ", results[1])
+    print("f1 : ", f1)
+    
+    return f1
 import random
-for i in range(100):
-    ts = 0.11
-    rs = 1062888800
-    p = 170
-    bs = i%20 + 1
-    ac = auto(ts,rs,p,bs)
-    if ac > 0.85:
-        print("ts : ", ts)
-        print("rs : ", rs)        
-        print("p : ", p)
-        print("bs : ", bs)
-        print("acc : ", ac)
-        
-        
+for i in range(10000):
+    ts = random.randrange(10, 31) / 100 
+    vs = random.randrange(10, 31) / 100
+    f = auto(ts, vs)
+    if f > 0.91:
+        break
