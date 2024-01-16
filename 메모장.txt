@@ -72,3 +72,7 @@ softmax를 통해 나온 값과 onehotencoding한 값은 np.argmax( 값, axis=1)
 
 scaling을 할 때, 데이터셋을 split 하기 전보다 한 후에 하는것이 과적합을 방지해주기 때문에 성능이 좋다.
 
+save_model(path) 를 통해 모델과 가중치를 저장할 수 있다.
+load_model(path)로 저장해둔 모델과 가중치를 가져올 수 있다.
+model대신 weights를 써서 가중치만 가져올 수도 있다.
+ModelCheckPoint 콜백 함수로 원하는 조건의 모델을 저장할 수 있다. ( 동일한 monitor를 쓰는 early_stopping 콜백 함수에서 restore_best_weight를 True로 했을 때와 저장되는 모델이 같았다. )
