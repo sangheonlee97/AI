@@ -115,12 +115,12 @@ model.add(Dense(9,activation='relu'))
 model.add(Dense(21,activation='relu'))
 model.add(Dense(16,activation='relu'))
 model.add(Dense(21,activation='relu'))
-model.add(Dense(7, activation='softmax'))
+model.add(Dense(7, activation='softmax')) 
 
 ############### 3. compile, fit ############
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 es = EarlyStopping(monitor='val_loss', mode='min', patience=500, verbose=1, restore_best_weights=True)
-model.fit(X_train, y_train, epochs=100000, batch_size=1000, validation_split=0.3, callbacks=[es])
+model.fit(X_train, y_train, epochs=100000, batch_size=1000, validation_split=0.4, callbacks=[es])
 
 model.save("..//_data//_save//dacon_loan.h5")
 
