@@ -1,7 +1,7 @@
 import warnings
 warnings.filterwarnings('ignore')
 from sklearn.datasets import load_boston
-from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import MinMaxScaler, MaxAbsScaler, StandardScaler, RobustScaler
 # 현재 사이킷런 버전 1.3.0이라 보스턴 안됨. 그래서 삭제
 # pip uninstall scikit-learn
 # pip uninstall scikit-learn-intelex
