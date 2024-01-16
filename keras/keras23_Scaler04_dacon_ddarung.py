@@ -74,6 +74,8 @@ scaler = StandardScaler()
 scaler.fit(tX_x_train)
 tX_x_train = scaler.transform(tX_x_train)
 tX_x_test = scaler.transform(tX_x_test)
+
+
 # print(tX_x_train.shape) # (572, 6)
 # print(tX_y_train.shape) # (572, 3)
 model_2 = Sequential()
