@@ -143,8 +143,9 @@ print("f1 : ", f1)
 y_sub = model.predict(test_csv)
 y_sub = ohe.inverse_transform(y_sub)
 y_sub = pd.DataFrame(y_sub)
-filename = "".join(["..//_data//_save//dacon_loan_1_", str(f1.round(4)),".h5"])
-model.save(filename)
+if f1 > 0.9:
+    filename = "".join(["..//_data//_save//dacon_loan_1_", str(f1.round(4)),".h5"])
+    model.save(filename)
 
 
 sub_csv['대출등급'] = y_sub
