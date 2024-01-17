@@ -5,7 +5,7 @@ from keras.layers import Dense
 from keras.callbacks import EarlyStopping
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, f1_score
-from sklearn.preprocessing import LabelEncoder, OneHotEncoder, MinMaxScaler, StandardScaler
+from sklearn.preprocessing import LabelEncoder, OneHotEncoder, MinMaxScaler, StandardScaler, Normalizer, RobustScaler
 path = "..//_data//dacon//daechul//"
 
 ############## 1. data ###############
@@ -21,6 +21,11 @@ sub_csv = pd.read_csv(path + "sample_submission.csv")
 
 train_csv = train_csv.drop(labels='TRAIN_28730',axis=0) # 주택소유 상태가 any인 row 삭제
 
+train_csv = train_csv.drop(['연체계좌수'], axis=1)  # 중요도가 낮아보이는 컬럼 삭제
+test_csv = test_csv.drop(['연체계좌수'], axis=1)    # 중요도가 낮아보이는 컬럼 삭제
+train_csv = train_csv.drop(['총계좌수'], axis=1)  # 중요도가 낮아보이는 컬럼 삭제
+test_csv = test_csv.drop(['총계좌수'], axis=1)    # 중요도가 낮아보이는 컬럼 삭제
+
 X = train_csv.drop(['대출등급'], axis=1)
 y = train_csv['대출등급']
 
@@ -34,7 +39,7 @@ test_csv['주택소유상태'] = le_own.transform(test_csv['주택소유상태']
 
 
 # print(train_csv['대출목적'].value_counts())
-test_csv.iloc[34486,7] = '이사'     # 결혼 -> 이사 로 임의로 바꿈
+test_csv.iloc[34486,6] = '이사'     # 결혼 -> 이사 로 임의로 바꿈 : 원래 7
 le_purpose = LabelEncoder()
 le_purpose.fit(X['대출목적'])
 X['대출목적'] = le_purpose.transform(X['대출목적'])
@@ -109,21 +114,20 @@ test_csv = ss.transform(test_csv)
 
 ############### 2. model ################
 model = Sequential()
-model.add(Dense(19, input_shape= (13, ),activation='relu'))
+model.add(Dense(19, input_shape= (11, ),activation='relu'))
 model.add(Dense(97,activation='relu'))
+model.add(Dense(9,activation='relu'))
 model.add(Dense(21,activation='relu'))
-model.add(Dense(21,activation='relu'))
-model.add(Dense(90,activation='relu'))
-model.add(Dense(21,activation='relu'))
+model.add(Dense(16,activation='relu'))
 model.add(Dense(21,activation='relu'))
 model.add(Dense(7, activation='softmax')) 
 
 ############### 3. compile, fit ############
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
-es = EarlyStopping(monitor='val_loss', mode='min', patience=1000, verbose=1, restore_best_weights=True)
-model.fit(X_train, y_train, epochs=100000, batch_size=500, validation_split=0.15, callbacks=[es])
+es = EarlyStopping(monitor='val_loss', mode='min', patience=500, verbose=1, restore_best_weights=True)
+model.fit(X_train, y_train, epochs=100000, batch_size=1000, validation_split=0.3, callbacks=[es])
 
-model.save("..//_data//_save//dacon_loan.h5")
+model.save("..//_data//_save//dacon_loan_notauto.h5")
 
 ############### 4. evaluated, predict ##########
 results = model.evaluate(X_test, y_test)
