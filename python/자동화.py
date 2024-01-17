@@ -5,13 +5,13 @@ from keras.layers import Dense
 from keras.callbacks import EarlyStopping
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, f1_score
-from sklearn.preprocessing import LabelEncoder, OneHotEncoder, MinMaxScaler, StandardScaler
+from sklearn.preprocessing import LabelEncoder, OneHotEncoder, MinMaxScaler, StandardScaler, Normalizer, RobustScaler
 path = "..//_data//dacon//daechul//"
 
 ############## 1. data ###############
 
 train_csv = pd.read_csv(path + "train.csv", index_col='ID')
-# test_csv = pd.read_csv(path + "test.csv", index_col="ID")
+test_csv = pd.read_csv(path + "test.csv", index_col="ID")
 sub_csv = pd.read_csv(path + "sample_submission.csv")
 
 # print(train_csv.shape)  #(96294, 14)
@@ -20,6 +20,11 @@ sub_csv = pd.read_csv(path + "sample_submission.csv")
 
 
 train_csv = train_csv.drop(labels='TRAIN_28730',axis=0) # 주택소유 상태가 any인 row 삭제
+
+train_csv = train_csv.drop(['연체계좌수'], axis=1)  # 중요도가 낮아보이는 컬럼 삭제
+test_csv = test_csv.drop(['연체계좌수'], axis=1)    # 중요도가 낮아보이는 컬럼 삭제
+train_csv = train_csv.drop(['총계좌수'], axis=1)  # 중요도가 낮아보이는 컬럼 삭제
+test_csv = test_csv.drop(['총계좌수'], axis=1)    # 중요도가 낮아보이는 컬럼 삭제
 
 X = train_csv.drop(['대출등급'], axis=1)
 y = train_csv['대출등급']
@@ -30,15 +35,15 @@ y = train_csv['대출등급']
 le_own = LabelEncoder()
 le_own.fit(X['주택소유상태'])
 X['주택소유상태'] = le_own.transform(X['주택소유상태'])
-# test_csv['주택소유상태'] = le_own.transform(test_csv['주택소유상태'])
+test_csv['주택소유상태'] = le_own.transform(test_csv['주택소유상태'])
 
 
 # print(train_csv['대출목적'].value_counts())
-# test_csv.iloc[34486,7] = '이사'     # 결혼 -> 이사 로 임의로 바꿈
+test_csv.iloc[34486,6] = '이사'     # 결혼 -> 이사 로 임의로 바꿈 : 원래 7
 le_purpose = LabelEncoder()
 le_purpose.fit(X['대출목적'])
 X['대출목적'] = le_purpose.transform(X['대출목적'])
-# test_csv['대출목적'] = le_purpose.transform(test_csv['대출목적'])
+test_csv['대출목적'] = le_purpose.transform(test_csv['대출목적'])
 
 
 
@@ -65,9 +70,9 @@ le_work_period.fit(X['근로기간'])
 X['근로기간'] = le_work_period.transform(X['근로기간'])
 X[X['근로기간'] == 1] = 0   # 1 years를 1year 로 바꿈
 X[X['근로기간'] == 5] = 6   # 3을 3 years 로 바꿈
-# test_csv['근로기간'] = le_work_period.transform(test_csv['근로기간'])
-# test_csv[test_csv['근로기간'] == 1] = 0 # # 1 years를 1year 로 바꿈
-# test_csv[test_csv['근로기간'] == 5] = 6   # 3을 3 years 로 바꿈
+test_csv['근로기간'] = le_work_period.transform(test_csv['근로기간'])
+test_csv[test_csv['근로기간'] == 1] = 0 # # 1 years를 1year 로 바꿈
+test_csv[test_csv['근로기간'] == 5] = 6   # 3을 3 years 로 바꿈
 # print(X.value_counts(['근로기간']))
 
 
@@ -82,7 +87,7 @@ X[X['근로기간'] == 5] = 6   # 3을 3 years 로 바꿈
 # test_csv['대출기간'] = le_loan_period.transform(test_csv['대출기간'])
 ####################
 X['대출기간'] = X['대출기간'].replace({' 36 months' : 36 , ' 60 months' : 60 }).astype(int)
-# test_csv['대출기간'] = test_csv['대출기간'].replace({' 36 months' : 36 , ' 60 months' : 60 }).astype(int)
+test_csv['대출기간'] = test_csv['대출기간'].replace({' 36 months' : 36 , ' 60 months' : 60 }).astype(int)
 
 
 
@@ -97,10 +102,10 @@ X['대출기간'] = X['대출기간'].replace({' 36 months' : 36 , ' 60 months' 
 # acc :  0.798601508140564
 # f1 :  0.752024962077973
 
-def auto(ts, vs):
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=ts, random_state=3, stratify=y)
+def auto(rs, bs):
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=rs, stratify=y)
 
-    ss = StandardScaler()
+    ss = RobustScaler()
     ss.fit(X_train)
     X_train = ss.transform(X_train)
     X_test = ss.transform(X_test)
@@ -109,20 +114,19 @@ def auto(ts, vs):
 
     ############### 2. model ################
     model = Sequential()
-    model.add(Dense(19, input_shape= (13, ),activation='relu'))
+    model.add(Dense(19, input_shape= (11, ),activation='relu'))
     model.add(Dense(97,activation='relu'))
+    model.add(Dense(11,activation='relu'))
+    model.add(Dense(10,activation='relu'))
     model.add(Dense(9,activation='relu'))
-    model.add(Dense(21,activation='relu'))
-    model.add(Dense(16,activation='relu'))
-    model.add(Dense(21,activation='relu'))
+    model.add(Dense(41,activation='relu'))
     model.add(Dense(7, activation='softmax')) 
 
     ############### 3. compile, fit ############
     model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
-    es = EarlyStopping(monitor='val_loss', mode='min', patience=100, verbose=1, restore_best_weights=True)
-    model.fit(X_train, y_train, epochs=100000, batch_size=1000, validation_split=vs, callbacks=[es])
+    es = EarlyStopping(monitor='val_loss', mode='min', patience=300, verbose=1, restore_best_weights=True)
+    model.fit(X_train, y_train, epochs=100000, batch_size=bs, validation_split=0.1, callbacks=[es])
 
-    model.save("..//_data//_save//dacon_loan.h5")
 
     ############### 4. evaluated, predict ##########
     results = model.evaluate(X_test, y_test)
@@ -136,12 +140,16 @@ def auto(ts, vs):
     print("loss : ", results[0])
     print("acc : ", results[1])
     print("f1 : ", f1)
-    
+    # y_sub = model.predict(test_csv)
+    # y_sub = ohe.inverse_transform(y_sub)
+    # y_sub = pd.DataFrame(y_sub)
+    if f1 > 0.9:
+        filename = "".join(["..//_data//_save//dacon_loan_1_auto_", str(f1.round(4)),"_rs",str(rs),"_bs",str(bs) ,".h5"])
+        model.save(filename)
     return f1
+
 import random
-for i in range(10000):
-    ts = random.randrange(10, 31) / 100 
-    vs = random.randrange(10, 31) / 100
-    f = auto(ts, vs)
-    if f > 0.91:
+for rs in range(1, 1000000):
+    bs = random.randrange(400, 10000)
+    if auto(rs, bs) > 0.95:
         break
