@@ -59,7 +59,9 @@ es = EarlyStopping(monitor='val_loss',
                    restore_best_weights=True
                    )
 
-mcp = ModelCheckpoint(monitor='val_loss', mode='auto', verbose=1, save_best_only=True, filepath=filepath)
+mcp = ModelCheckpoint(monitor='val_loss', mode='auto', verbose=1,
+                      save_best_only=True ,
+                      filepath="..//_data//_save//MCP//keras25_MCP1.hdf5")
 model.compile(loss='mse', optimizer='adam', metrics=['accuracy'])
 histroy = model.fit(X_train, y_train, epochs=1000, validation_split=0.2, callbacks=[es,mcp])
 model.save("..//_data//_save//keras25.h5")
@@ -97,6 +99,6 @@ r2 = r2_score(y_test, y_pred)
 print("loss : ", loss)
 print("r2 : ", r2)
 
-print("+++++++++++++++++++++++++++++++++++++++++++++++")
-print(histroy.history['val_loss'])
-print("+++++++++++++++++++++++++++++++++++++++++++++++")
+# print("+++++++++++++++++++++++++++++++++++++++++++++++")
+# print(histroy.history['val_loss'])
+# print("+++++++++++++++++++++++++++++++++++++++++++++++")
