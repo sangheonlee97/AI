@@ -105,7 +105,7 @@ test_csv['대출기간'] = test_csv['대출기간'].replace({' 36 months' : 36 ,
 def auto(rs, bs):
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=rs, stratify=y)
 
-    ss = RobustScaler()
+    ss = StandardScaler()
     ss.fit(X_train)
     X_train = ss.transform(X_train)
     X_test = ss.transform(X_test)
@@ -144,12 +144,12 @@ def auto(rs, bs):
     # y_sub = ohe.inverse_transform(y_sub)
     # y_sub = pd.DataFrame(y_sub)
     if f1 > 0.9:
-        filename = "".join(["..//_data//_save//dacon_loan_1_auto_", str(f1.round(4)),"_rs",str(rs),"_bs",str(bs) ,".h5"])
+        filename = "".join(["..//_data//_save//dacon_loan_std_auto_", str(f1.round(4)),"_rs",str(rs),"_bs",str(bs) ,".h5"])
         model.save(filename)
     return f1
 
 import random
 for rs in range(1, 1000000):
-    bs = random.randrange(400, 10000)
-    if auto(rs, bs) > 0.95:
+    # bs = random.randrange(400, 10000)
+    if auto(4, 1374) > 0.95:
         break
