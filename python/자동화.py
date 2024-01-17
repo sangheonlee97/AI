@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 from keras.models import Sequential, save_model
-from keras.layers import Dense
+from keras.layers import Dense, Dropout
 from keras.callbacks import EarlyStopping
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, f1_score
@@ -115,11 +115,17 @@ def auto(rs, bs):
     ############### 2. model ################
     model = Sequential()
     model.add(Dense(19, input_shape= (11, ),activation='relu'))
+    model.add(Dropout(0.3))
     model.add(Dense(97,activation='relu'))
+    model.add(Dropout(0.3))
     model.add(Dense(11,activation='relu'))
+    model.add(Dropout(0.3))
     model.add(Dense(10,activation='relu'))
+    model.add(Dropout(0.3))
     model.add(Dense(9,activation='relu'))
+    model.add(Dropout(0.3))
     model.add(Dense(41,activation='relu'))
+    model.add(Dropout(0.3))
     model.add(Dense(7, activation='softmax')) 
 
     ############### 3. compile, fit ############
