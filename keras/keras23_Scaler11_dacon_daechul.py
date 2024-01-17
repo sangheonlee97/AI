@@ -143,7 +143,7 @@ print("f1 : ", f1)
 y_sub = model.predict(test_csv)
 y_sub = ohe.inverse_transform(y_sub)
 y_sub = pd.DataFrame(y_sub)
-filename = "".join(["..//_data//_save//dacon_loan_", str(f1.round(4)),".h5"])
+filename = "".join(["..//_data//_save//dacon_loan_1_", str(f1.round(4)),".h5"])
 model.save(filename)
 
 
