@@ -7,6 +7,20 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, f1_score
 from sklearn.preprocessing import LabelEncoder, OneHotEncoder, MinMaxScaler, StandardScaler, Normalizer, RobustScaler
 path = "..//_data//dacon//daechul//"
+import os
+
+def save_code_to_file(filename=None):
+    if filename is None:
+        # 현재 스크립트의 파일명을 가져와서 확장자를 txt로 변경
+        filename = os.path.splitext(os.path.basename(__file__))[0] + ".txt"
+    
+    with open(__file__, "r") as file:
+        code = file.read()
+    
+    with open(filename, "w") as file:
+        file.write(code)
+
+
 
 ############## 1. data ###############
 
@@ -166,6 +180,7 @@ y_sub = pd.DataFrame(y_sub)
 if f1 > 0.9:
     filename = "".join(["..//_data//_save//dacon_loan_Rob_dlwptlwkr_", str(f1.round(4)),".h5"])
     model.save(filename)
+    save_code_to_file(filename)
 
 
 sub_csv['대출등급'] = y_sub
@@ -174,3 +189,5 @@ sub_csv.to_csv(path + "submisson.csv", index=False)
 
 # loss :  76.33777618408203
 # acc :  0.40988630056381226
+
+
