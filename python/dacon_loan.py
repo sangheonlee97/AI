@@ -13,6 +13,8 @@ def save_code_to_file(filename=None):
     if filename is None:
         # 현재 스크립트의 파일명을 가져와서 확장자를 txt로 변경
         filename = os.path.splitext(os.path.basename(__file__))[0] + ".txt"
+    else:
+        filename = filename + ".txt"
     
     with open(__file__, "r") as file:
         code = file.read()
@@ -159,7 +161,7 @@ model.add(Dense(7, activation='softmax'))
 ############### 3. compile, fit ############
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 es = EarlyStopping(monitor='val_loss', mode='min', patience=100, verbose=1, restore_best_weights=True)
-model.fit(X_train, y_train, epochs=100000, batch_size=1500, validation_split=0.1, callbacks=[es])
+model.fit(X_train, y_train, epochs=100000, batch_size=5000, validation_split=0.1, callbacks=[es])
 
 # 11R : 866, 870, 818, 861, 888, 805   ,,,,,,, 13R : 881, 864, 862, 882, 866, 860
 ############### 4. evaluated, predict ##########
@@ -177,17 +179,16 @@ print("f1 : ", f1)
 y_sub = model.predict(test_csv)
 y_sub = ohe.inverse_transform(y_sub)
 y_sub = pd.DataFrame(y_sub)
+    
+
 if f1 > 0.9:
-    filename = "".join(["..//_data//_save//dacon_loan_Rob_dlwptlwkr_", str(f1.round(4)),".h5"])
+    filename = "".join(["..//_data//_save//dacon_loan_Rob_ikuyoit_", str(f1.round(4)),".h5"])
+    filenamename = "".join(["..//_data//_save//dacon_loan_Rob_ikuyoit_", str(f1.round(4))])
+    
     model.save(filename)
-    save_code_to_file(filename)
+    save_code_to_file(filenamename)
 
 
 sub_csv['대출등급'] = y_sub
 # print(sub_csv['대출등급'])
 sub_csv.to_csv(path + "submisson.csv", index=False)
-
-# loss :  76.33777618408203
-# acc :  0.40988630056381226
-
-
