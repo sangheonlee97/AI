@@ -161,7 +161,13 @@ model.add(Dense(7, activation='softmax'))
 ############### 3. compile, fit ############
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 es = EarlyStopping(monitor='val_loss', mode='min', patience=100, verbose=1, restore_best_weights=True)
+
+import time
+start_time = time.time()
+
 model.fit(X_train, y_train, epochs=100000, batch_size=5000, validation_split=0.1, callbacks=[es])
+
+end_time = time.time()
 
 # 11R : 866, 870, 818, 861, 888, 805   ,,,,,,, 13R : 881, 864, 862, 882, 866, 860
 ############### 4. evaluated, predict ##########
@@ -179,7 +185,9 @@ print("f1 : ", f1)
 y_sub = model.predict(test_csv)
 y_sub = ohe.inverse_transform(y_sub)
 y_sub = pd.DataFrame(y_sub)
-    
+
+print("걸린 시간 : ", round(end_time - start_time,2), "초")
+
 
 if f1 > 0.9:
     filename = "".join(["..//_data//_save//dacon_loan_Rob_ikuyoit_", str(f1.round(4)),".h5"])
