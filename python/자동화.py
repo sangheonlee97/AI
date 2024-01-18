@@ -21,8 +21,8 @@ sub_csv = pd.read_csv(path + "sample_submission.csv")
 
 train_csv = train_csv.drop(labels='TRAIN_28730',axis=0) # 주택소유 상태가 any인 row 삭제
 
-train_csv = train_csv.drop(['연체계좌수'], axis=1)  # 중요도가 낮아보이는 컬럼 삭제
-test_csv = test_csv.drop(['연체계좌수'], axis=1)    # 중요도가 낮아보이는 컬럼 삭제
+# train_csv = train_csv.drop(['연체계좌수'], axis=1)  # 중요도가 낮아보이는 컬럼 삭제
+# test_csv = test_csv.drop(['연체계좌수'], axis=1)    # 중요도가 낮아보이는 컬럼 삭제
 train_csv = train_csv.drop(['총계좌수'], axis=1)  # 중요도가 낮아보이는 컬럼 삭제
 test_csv = test_csv.drop(['총계좌수'], axis=1)    # 중요도가 낮아보이는 컬럼 삭제
 
@@ -65,14 +65,21 @@ y = ohe.transform(y)
 # unknown 도 라벨링 해버릴지.. unknown만 따로 빼서 학습 시킬지 고민 중.
 # 우선 같이 라벨링 시도
 # print(X.value_counts(['근로기간']))
+train_csv.loc[train_csv['근로기간']=='3','근로기간']='3 years'
+test_csv.loc[test_csv['근로기간']=='3','근로기간']='3 years'
+test_csv.loc[test_csv['근로기간']=='1 year','근로기간']='1 years'
+train_csv.loc[train_csv['근로기간']=='1 year','근로기간']='1 years'
+test_csv.loc[test_csv['근로기간']=='<1 year','근로기간']='< 1 year'
+train_csv.loc[train_csv['근로기간']=='<1 year','근로기간']='< 1 year'
+test_csv.loc[test_csv['근로기간']=='10+years','근로기간']='10+ years'
+train_csv.loc[train_csv['근로기간']=='10+years','근로기간']='10+ years'
+
+
 le_work_period = LabelEncoder()
 le_work_period.fit(X['근로기간'])
 X['근로기간'] = le_work_period.transform(X['근로기간'])
-X[X['근로기간'] == 1] = 0   # 1 years를 1year 로 바꿈
-X[X['근로기간'] == 5] = 6   # 3을 3 years 로 바꿈
 test_csv['근로기간'] = le_work_period.transform(test_csv['근로기간'])
-test_csv[test_csv['근로기간'] == 1] = 0 # # 1 years를 1year 로 바꿈
-test_csv[test_csv['근로기간'] == 5] = 6   # 3을 3 years 로 바꿈
+
 # print(X.value_counts(['근로기간']))
 
 
@@ -103,7 +110,7 @@ test_csv['대출기간'] = test_csv['대출기간'].replace({' 36 months' : 36 ,
 # f1 :  0.752024962077973
 
 def auto(rs, bs):
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=rs, stratify=y)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.15, random_state=rs, stratify=y)
 
     ss = StandardScaler()
     ss.fit(X_train)
@@ -114,24 +121,19 @@ def auto(rs, bs):
 
     ############### 2. model ################
     model = Sequential()
-    model.add(Dense(19, input_shape= (11, ),activation='relu'))
-    model.add(Dropout(0.3))
+    model.add(Dense(19, input_shape= (12, ),activation='relu'))
     model.add(Dense(97,activation='relu'))
-    model.add(Dropout(0.3))
+    model.add(Dropout(0.2))
     model.add(Dense(11,activation='relu'))
-    model.add(Dropout(0.3))
     model.add(Dense(10,activation='relu'))
-    model.add(Dropout(0.3))
     model.add(Dense(9,activation='relu'))
-    model.add(Dropout(0.3))
     model.add(Dense(41,activation='relu'))
-    model.add(Dropout(0.3))
     model.add(Dense(7, activation='softmax')) 
 
     ############### 3. compile, fit ############
     model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
     es = EarlyStopping(monitor='val_loss', mode='min', patience=300, verbose=1, restore_best_weights=True)
-    model.fit(X_train, y_train, epochs=100000, batch_size=bs, validation_split=0.1, callbacks=[es])
+    model.fit(X_train, y_train, epochs=100000, batch_size=bs, validation_split=0.15, callbacks=[es])
 
 
     ############### 4. evaluated, predict ##########
@@ -150,12 +152,12 @@ def auto(rs, bs):
     # y_sub = ohe.inverse_transform(y_sub)
     # y_sub = pd.DataFrame(y_sub)
     if f1 > 0.9:
-        filename = "".join(["..//_data//_save//dacon_loan_std_auto_", str(f1.round(4)),"_rs",str(rs),"_bs",str(bs) ,".h5"])
+        filename = "".join(["..//_data//_save//dacon_loan_0118_Rob_auto2_", str(f1.round(4)),"_rs",str(rs),"_bs",str(bs) ,".h5"])
         model.save(filename)
     return f1
 
 import random
-for rs in range(1, 1000000):
-    # bs = random.randrange(400, 10000)
-    if auto(4, 1374) > 0.95:
+for rs in range(2000000, 10000000):
+    bs = random.randrange(400, 10000)
+    if auto(rs, bs) > 0.95:
         break

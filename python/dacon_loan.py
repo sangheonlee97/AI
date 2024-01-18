@@ -125,11 +125,11 @@ test_csv['대출기간'] = test_csv['대출기간'].replace({' 36 months' : 36 ,
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=4, stratify=y)
 
-ss = RobustScaler()
-ss.fit(X_train)
-X_train = ss.transform(X_train)
-X_test = ss.transform(X_test)
-test_csv = ss.transform(test_csv)
+sc = RobustScaler()
+sc.fit(X_train)
+X_train = sc.transform(X_train)
+X_test = sc.transform(X_test)
+test_csv = sc.transform(test_csv)
 
 
 ############### 2. model ################
