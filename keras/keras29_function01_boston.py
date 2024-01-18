@@ -8,8 +8,8 @@ from sklearn.preprocessing import MinMaxScaler, MaxAbsScaler, StandardScaler, Ro
 # pip uninstall scikit-image
 # pip install scikit-learn==1.1.3
 from sklearn.model_selection import train_test_split
-from keras.models import Sequential, save_model, load_model
-from keras.layers import Dense , Dropout
+from keras.models import Sequential
+from keras.layers import Dense
 import numpy as np
 
 datasets = load_boston()
@@ -34,21 +34,25 @@ mms.fit(X_train)
 X_train = mms.transform(X_train)
 X_test = mms.transform(X_test)
 
-model = Sequential()
-model.add(Dense(25, input_dim=13))
-model.add(Dropout(0.3))
-model.add(Dense(40))
-model.add(Dropout(0.3))
-model.add(Dense(35))
-model.add(Dropout(0.3))
-model.add(Dense(30))
-model.add(Dropout(0.3))
-model.add(Dense(1))
-
+# model = Sequential()
+# model.add(Dense(25, input_dim=13))
+# model.add(Dense(40))
+# model.add(Dense(35))
+# model.add(Dense(30))
+# model.add(Dense(1))
+from keras.models import Model
+from keras.layers import Input
+input = Input(shape=(13, ))
+dense1 = Dense(25)(input)
+dense2 = Dense(40)(dense1)
+dense3 = Dense(35)(dense2)
+dense4 = Dense(30)(dense3)
+output = Dense(1)(dense4)
+model = Model(inputs=input, outputs=output)
 
 model.compile(loss='mse', optimizer='adam')
 
-import time 
+import time
 start_time = time.time()
 from keras.callbacks import ModelCheckpoint, EarlyStopping
 es = EarlyStopping(monitor='val_loss', mode='min', patience=10, verbose=1)

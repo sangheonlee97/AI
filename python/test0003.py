@@ -129,7 +129,7 @@ test_csv = ss.transform(test_csv)
 
 model = load_model("..//_data//_save//dacon_loan_1_auto_0.9231_rs4_bs1374.h5")
 es = EarlyStopping(monitor='val_loss', mode='min', patience=100, verbose=1, restore_best_weights=True)
-model.fit(X_train, y_train, epochs=100000, batch_size=100, validation_split=0.2, callbacks=[es])
+model.fit(X_train, y_train, epochs=100000, batch_size=10000, validation_split=0.6, callbacks=[es])
 
 ############### 4. evaluated, predict ##########
 results = model.evaluate(X_test, y_test)
@@ -153,7 +153,7 @@ if f1 > 0.9:
 
 sub_csv['대출등급'] = y_sub
 # print(sub_csv['대출등급'])
-sub_csv.to_csv(path + "submisson_117.csv", index=False)
+sub_csv.to_csv(path + "submisson_117_3.csv", index=False)
 
 # loss :  76.33777618408203
 # acc :  0.40988630056381226
