@@ -49,8 +49,8 @@ train_csv.loc[train_csv['근로기간']=='10+years','근로기간']='10+ years'
 
 # train_csv = train_csv.drop(['연체계좌수'], axis=1)  # 중요도가 낮아보이는 컬럼 삭제
 # test_csv = test_csv.drop(['연체계좌수'], axis=1)    # 중요도가 낮아보이는 컬럼 삭제
-train_csv = train_csv.drop(['총계좌수'], axis=1)  # 중요도가 낮아보이는 컬럼 삭제
-test_csv = test_csv.drop(['총계좌수'], axis=1)    # 중요도가 낮아보이는 컬럼 삭제
+# train_csv = train_csv.drop(['총계좌수'], axis=1)  # 중요도가 낮아보이는 컬럼 삭제
+# test_csv = test_csv.drop(['총계좌수'], axis=1)    # 중요도가 낮아보이는 컬럼 삭제
 # train_csv = train_csv.drop(['주택소유상태'], axis=1)  # 중요도가 낮아보이는 컬럼 삭제
 # test_csv = test_csv.drop(['주택소유상태'], axis=1)    # 중요도가 낮아보이는 컬럼 삭제
 
@@ -70,7 +70,7 @@ test_csv['주택소유상태'] = le_own.transform(test_csv['주택소유상태']
 
 
 # print(train_csv['대출목적'].value_counts())
-test_csv.iloc[34486,6] = '이사'     # 결혼 -> 이사 로 임의로 바꿈 : 원래 7
+test_csv.iloc[34486,7] = '부채 통합'     # 결혼 -> 부채 통합 으로 임의로 바꿈 : 원래 7
 le_purpose = LabelEncoder()
 le_purpose.fit(X['대출목적'])
 X['대출목적'] = le_purpose.transform(X['대출목적'])
@@ -91,21 +91,6 @@ ohe.fit(y)
 y = ohe.transform(y)
 
 
-# print(train_csv['근로기간'].value_counts()) # 결측치 unknown 5671 개  , 1 year이 1years 로 오기 돼있는 듯한 데이터 있음,  3도 이씀
-# print(test_csv['근로기간'].value_counts()) # 결측치 unknown 3862 개
-# unknown 도 라벨링 해버릴지.. unknown만 따로 빼서 학습 시킬지 고민 중.
-# 우선 같이 라벨링 시도
-# print(X.value_counts(['근로기간']))
-le_work_period = LabelEncoder()
-le_work_period.fit(X['근로기간'])
-X['근로기간'] = le_work_period.transform(X['근로기간'])
-test_csv['근로기간'] = le_work_period.transform(test_csv['근로기간'])
-
-# X[X['근로기간'] == 1] = 0   # 1 years를 1year 로 바꿈
-# X[X['근로기간'] == 5] = 6   # 3을 3 years 로 바꿈
-# test_csv[test_csv['근로기간'] == 1] = 0 # # 1 years를 1year 로 바꿈
-# test_csv[test_csv['근로기간'] == 5] = 6   # 3을 3 years 로 바꿈
-# print(X.value_counts(['근로기간']))
 
 
 
@@ -137,7 +122,62 @@ test_csv['대출기간'] = test_csv['대출기간'].replace({' 36 months' : 36 ,
 
 
 
+# print(train_csv['근로기간'].value_counts()) # 결측치 unknown 5671 개  , 1 year이 1years 로 오기 돼있는 듯한 데이터 있음,  3도 이씀
+# print(test_csv['근로기간'].value_counts()) # 결측치 unknown 3862 개
+# unknown 도 라벨링 해버릴지.. unknown만 따로 빼서 학습 시킬지 고민 중.
+# 우선 같이 라벨링 시도
+# print(X.value_counts(['근로기간']))
 
+
+# print(train_csv['근로기간'].value_counts()) # 결측치 unknown 5671 개  , 1 year이 1years 로 오기 돼있는 듯한 데이터 있음,  3도 이씀
+# print(test_csv['근로기간'].value_counts()) # 결측치 unknown 3862 개
+
+train_df = X[X['근로기간'] != 'Unknown']    # 결측치와 아닌 행 분리
+test_df = X[X['근로기간'] == 'Unknown']
+
+X2 = train_df.drop(['근로기간'], axis=1)
+y2 = train_df['근로기간']
+print(y2.value_counts())
+y22 = y2.values.reshape(-1, 1)
+ohe2 = OneHotEncoder(sparse=False)
+y2_ohe = ohe2.fit_transform(y22)
+
+X2_train, X2_test, y2_train, y2_test = train_test_split(X2, y2_ohe, test_size=0.15, stratify=y2_ohe, random_state=42)
+sc2 = MinMaxScaler()
+sc2.fit(X2_train)
+X22_train = sc2.transform(X2_train)
+X22_test = sc2.transform(X2_test)
+
+model2 = Sequential()
+model2.add(Dense(19, input_shape= (12, ),activation='relu'))
+model2.add(Dense(97,))
+model2.add(Dense(11,))
+model2.add(Dense(10,))
+model2.add(Dense(9))
+model2.add(Dense(41))
+model2.add(Dense(11, activation='softmax')) 
+
+hist2 = model2.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+es2 = EarlyStopping(monitor='val_loss', mode='min', patience=100, verbose=1, restore_best_weights=True)
+model2.fit(X22_train, y2_train, epochs=100000, batch_size=1000, validation_split=0.15, callbacks=[es2])
+
+results = model2.evaluate(X22_test, y2_test)
+if results[1] > 0.8:
+    filename = "".join(["..//_data//_save//dacon_loan_model2_", str(results[1].round(4)),".h5"])
+    model2.save(filename)
+print("result : ",results[1])
+y2_pred = model2.predict(X22_test)
+y2_test = ohe2.inverse_transform(y2_test)
+y2_pred = ohe2.inverse_transform(y2_pred)
+acc2 = accuracy_score(y2_test, y2_pred)
+print("acc : ", acc2)
+
+
+# print(X.value_counts(['근로기간']))
+le_work_period = LabelEncoder()
+le_work_period.fit(X['근로기간'])
+X['근로기간'] = le_work_period.transform(X['근로기간'])
+test_csv['근로기간'] = le_work_period.transform(test_csv['근로기간'])
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=4, stratify=y)
 
@@ -147,10 +187,10 @@ X_train = sc.transform(X_train)
 X_test = sc.transform(X_test)
 test_csv = sc.transform(test_csv)
 
-
+'''
 ############### 2. model ################
 model = Sequential()
-model.add(Dense(19, input_shape= (12, ),activation='relu'))
+model.add(Dense(19, input_shape= (13, ),activation='relu'))
 model.add(Dense(97,activation='relu'))
 model.add(Dense(11,activation='relu'))
 model.add(Dense(10,activation='relu'))
@@ -165,15 +205,15 @@ es = EarlyStopping(monitor='val_loss', mode='min', patience=100, verbose=1, rest
 import time
 start_time = time.time()
 
-model.fit(X_train, y_train, epochs=100000, batch_size=5000, validation_split=0.1, callbacks=[es])
+model.fit(X_train, y_train, epochs=100000, batch_size=10000, validation_split=0.1, callbacks=[es])
 
 end_time = time.time()
 
-# 11R : 866, 870, 818, 861, 888, 805   ,,,,,,, 13R : 881, 864, 862, 882, 866, 860
 ############### 4. evaluated, predict ##########
 results = model.evaluate(X_test, y_test)
 
-
+# gpu 61 61 80 81
+# cpu 61 63
 
 y_pred = model.predict(X_test)
 y_pred = ohe.inverse_transform(y_pred)
@@ -200,3 +240,6 @@ if f1 > 0.9:
 sub_csv['대출등급'] = y_sub
 # print(sub_csv['대출등급'])
 sub_csv.to_csv(path + "submisson.csv", index=False)
+
+#reset하고 첨부터 시작 0.819, 0.836, 0.828
+'''

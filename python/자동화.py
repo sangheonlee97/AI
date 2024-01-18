@@ -157,7 +157,7 @@ def auto(rs, bs):
     return f1
 
 import random
-for rs in range(2000000, 10000000):
+for rs in range(5000000, 10000000):
     bs = random.randrange(400, 10000)
     if auto(rs, bs) > 0.95:
         break

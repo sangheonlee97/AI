@@ -91,8 +91,8 @@ model_2.fit(tX_x_train, tX_y_train, epochs=1000, batch_size=5, validation_split=
 
 model_2.evaluate(tX_x_test, tX_y_test)
 y2_pred = model_2.predict(tX_x_test)
-r2_2 = r2_score(tX_y_test, y2_pred)
-print("r2_2", r2_2)
+# r2_2 = r2_score(tX_y_test, y2_pred)
+# print("r2_2", r2_2)
 ########### 결측치가 없는 부분으로 결측치에 대한 가중치 학습 //
 
 tX_test = test_csv.loc[test_csv.isna().any(axis=1)]
