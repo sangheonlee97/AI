@@ -132,29 +132,36 @@ test_csv['대출기간'] = test_csv['대출기간'].replace({' 36 months' : 36 ,
 # print(train_csv['근로기간'].value_counts()) # 결측치 unknown 5671 개  , 1 year이 1years 로 오기 돼있는 듯한 데이터 있음,  3도 이씀
 # print(test_csv['근로기간'].value_counts()) # 결측치 unknown 3862 개
 
-train_df = X[X['근로기간'] != 'Unknown']    # 결측치와 아닌 행 분리
-test_df = X[X['근로기간'] == 'Unknown']
-
+train_df = X.loc[X['근로기간'] != 'Unknown']    # 결측치와 아닌 행 분리
+test_df = X.loc[X['근로기간'] == 'Unknown']
+# print(train_df.value_counts())
+# print(test_df.value_counts())
 X2 = train_df.drop(['근로기간'], axis=1)
 y2 = train_df['근로기간']
+# X.loc[X['근로기간'] != 'Unknown'] = train_df
+
+test_df_X = test_df.drop(['근로기간'], axis=1)
+# test_df_y = test_df['근로기간']
+
 print(y2.value_counts())
 y22 = y2.values.reshape(-1, 1)
 ohe2 = OneHotEncoder(sparse=False)
 y2_ohe = ohe2.fit_transform(y22)
 
 X2_train, X2_test, y2_train, y2_test = train_test_split(X2, y2_ohe, test_size=0.15, stratify=y2_ohe, random_state=42)
-sc2 = MinMaxScaler()
+sc2 = RobustScaler()
 sc2.fit(X2_train)
 X22_train = sc2.transform(X2_train)
 X22_test = sc2.transform(X2_test)
+test_df_X2 = sc2.transform(test_df_X)
 
 model2 = Sequential()
 model2.add(Dense(19, input_shape= (12, ),activation='relu'))
-model2.add(Dense(97,))
-model2.add(Dense(11,))
-model2.add(Dense(10,))
-model2.add(Dense(9))
-model2.add(Dense(41))
+model2.add(Dense(97,activation='relu'))
+model2.add(Dense(11,activation='relu'))
+model2.add(Dense(10,activation='relu'))
+model2.add(Dense(9,activation='relu'))
+model2.add(Dense(41,activation='relu'))
 model2.add(Dense(11, activation='softmax')) 
 
 hist2 = model2.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
@@ -171,14 +178,22 @@ y2_test = ohe2.inverse_transform(y2_test)
 y2_pred = ohe2.inverse_transform(y2_pred)
 acc2 = accuracy_score(y2_test, y2_pred)
 print("acc : ", acc2)
+y2_sub = model2.predict(test_df_X2)
+y2_sub = ohe2.inverse_transform(y2_sub)
+print(test_df['근로기간'].shape)
+print(y2_sub.shape)
 
+test_df['근로기간'][:] = y2_sub
+# X.loc[X['근로기간'] == 'Unknown'] = test_df
 
-# print(X.value_counts(['근로기간']))
+print(X)
+print(test_df.value_counts(['근로기간']))
 le_work_period = LabelEncoder()
 le_work_period.fit(X['근로기간'])
 X['근로기간'] = le_work_period.transform(X['근로기간'])
 test_csv['근로기간'] = le_work_period.transform(test_csv['근로기간'])
-
+'''
+###########################################################################################################
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=4, stratify=y)
 
 sc = RobustScaler()
@@ -187,7 +202,6 @@ X_train = sc.transform(X_train)
 X_test = sc.transform(X_test)
 test_csv = sc.transform(test_csv)
 
-'''
 ############### 2. model ################
 model = Sequential()
 model.add(Dense(19, input_shape= (13, ),activation='relu'))
