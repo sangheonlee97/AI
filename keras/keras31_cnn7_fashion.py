@@ -42,7 +42,9 @@ model.add(Conv2D(80, (3,3), activation='relu'))
 model.add(Flatten())
 model.add(Dense(500))
 model.add(Dropout(0.5))
-model.add(Dense(10))
+model.add(Dense(10, activation='softmax'))
+
+
 
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 es = EarlyStopping(monitor='val_loss', mode='min', patience=20, verbose=1, restore_best_weights=True)
