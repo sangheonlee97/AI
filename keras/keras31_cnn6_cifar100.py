@@ -1,16 +1,19 @@
 from keras.models import Sequential
 from keras.layers import Conv2D, Dense, Dropout, Flatten
-from keras.datasets import cifar10
+from keras.datasets import cifar100
 from keras.callbacks import EarlyStopping
 from sklearn.preprocessing import OneHotEncoder, MinMaxScaler
 import numpy as np
 import pandas as pd
-(X_train, y_train), (X_test, y_test) = cifar10.load_data()
+import matplotlib.pyplot as plt
+(X_train, y_train), (X_test, y_test) = cifar100.load_data()
 
 print(X_train.shape, X_test.shape) # (50000, 32, 32, 3) (10000, 32, 32, 3)
+# plt.imshow(X_train[2])
+# plt.show()
 # print(y_train.shape, y_test.shape) 
-# print(np.unique(y_train, return_counts=True)) # 0 ~ 9
-# print(np.unique(y_test, return_counts=True)) # 0 ~ 9
+print(np.unique(y_train, return_counts=True)) # 0 ~ 9
+print(np.unique(y_test, return_counts=True)) # 0 ~ 9
 # print(X_train)
 # print(X_test)
 # print(y_train)
@@ -36,16 +39,13 @@ model.add(Conv2D(130, (3, 3), activation='relu'))
 model.add(Flatten())
 model.add(Dense(100, activation='relu'))
 model.add(Dropout(0.5))
-model.add(Dense(100, activation='relu'))
-model.add(Dropout(0.5))
-model.add(Dense(10, activation='relu'))
-model.add(Dense(10, activation='softmax'))
+model.add(Dense(100, activation='softmax'))
 
 model.summary()
 
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 es = EarlyStopping(monitor='val_loss', mode='min', patience=20, restore_best_weights=True, verbose=1)
-model.fit(X_train, y_train, epochs=1000, batch_size=1000, validation_split=0.1, callbacks=[es], verbose=1)
+model.fit(X_train, y_train, epochs=1000, batch_size=500, validation_split=0.2, callbacks=[es], verbose=1)
 
 res = model.evaluate(X_test, y_test)
 
