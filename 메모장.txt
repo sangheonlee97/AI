@@ -82,3 +82,14 @@ https://mkjjo.github.io/python/2019/01/10/scaler.html 스케일러 고를 때 �
 cnn:  filters, kerer_size, input_shape 
       stride(커널이 움직이는 보폭)
       
+//
+
+LabelEncoding은 1차원 값에 대한 인코딩만 되므로, X값을 인코딩할 땐 OrdinalEncoder()를 사용한다.(사용 하면 안될거 같은 주장 V)
+https://abluesnake.tistory.com/169
+"그러나 주의해야될 점은, Ordinal 데이터를 함부로 숫자화할 수 없다는 점입니다. 
+실제로 대다수 데이터는 상하관계 혹은 피쳐 간의 차이가 샘플마다 다른 경우가 대다수입니다. 
+예를 들어 A에게 상과 중의 차이가 B가 느끼는 상과 중의 차이와 다를 수 있는 것입니다. 
+이렇듯 ordinal encoding을 실제로 사용하는 일은 굉장히 드뭅니다. 
+특히 neural network와 같은 딥러닝에서는 ordinal한 피쳐들이 가지는 대소 혹은 상하 관계가 원핫인코딩을 통해서도 반영이 될 수 있으며,
+웬만한 커다란 차원은 해결이 가능하기 때문에 더더욱 사용할 경우가 적어지고 있습니다."
+https://haehwan.github.io/posts/sta-Label-ordinal/

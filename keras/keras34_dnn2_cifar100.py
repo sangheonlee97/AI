@@ -65,3 +65,4 @@ model.fit(X_train, y_train, epochs=1000, batch_size=500, validation_split=0.15, 
 res = model.evaluate(X_test, y_test)
 
 print("acc : ", res[1])
+# 0.2(dnn)

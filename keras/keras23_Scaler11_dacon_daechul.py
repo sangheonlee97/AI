@@ -23,12 +23,12 @@ train_csv = train_csv.drop(labels='TRAIN_28730',axis=0) # 주택소유 상태가
 
 train_csv.loc[train_csv['근로기간']=='3','근로기간']='3 years'
 test_csv.loc[test_csv['근로기간']=='3','근로기간']='3 years'
-test_csv.loc[test_csv['근로기간']=='1 year','근로기간']='1 years'
 train_csv.loc[train_csv['근로기간']=='1 year','근로기간']='1 years'
-test_csv.loc[test_csv['근로기간']=='<1 year','근로기간']='< 1 year'
+test_csv.loc[test_csv['근로기간']=='1 year','근로기간']='1 years'
 train_csv.loc[train_csv['근로기간']=='<1 year','근로기간']='< 1 year'
-test_csv.loc[test_csv['근로기간']=='10+years','근로기간']='10+ years'
+test_csv.loc[test_csv['근로기간']=='<1 year','근로기간']='< 1 year'
 train_csv.loc[train_csv['근로기간']=='10+years','근로기간']='10+ years'
+test_csv.loc[test_csv['근로기간']=='10+years','근로기간']='10+ years'
 
 
 # train_csv = train_csv.drop(['연체계좌수'], axis=1)  # 중요도가 낮아보이는 컬럼 삭제
