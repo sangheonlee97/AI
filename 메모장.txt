@@ -93,3 +93,22 @@ https://abluesnake.tistory.com/169
 특히 neural network와 같은 딥러닝에서는 ordinal한 피쳐들이 가지는 대소 혹은 상하 관계가 원핫인코딩을 통해서도 반영이 될 수 있으며,
 웬만한 커다란 차원은 해결이 가능하기 때문에 더더욱 사용할 경우가 적어지고 있습니다."
 https://haehwan.github.io/posts/sta-Label-ordinal/
+
+//
+
+from keras.preprocessing.image import ImageDataGenerator
+train_datagen = ImageDataGenerator(
+    rescale=1/255.,
+    horizontal_flip=True,   # 수평 뒤집기
+    vertical_flip=True,     # 수직 뒤집기
+    width_shift_range=0.1,  # 가로로 평행이동
+    height_shift_range=0.1, # 세로로 평행이동
+    rotation_range=5,       # 정해진 각도만큼 이미지를 회전
+    zoom_range=1.2,         # 축소 또는 확대
+    shear_range=0.7,        # 좌표 하나를 고정시키고 다른 몇 개의 좌표를 이동시키는 변환
+    fill_mode='nearest',    # 빈 공간을 근사치로 채움,    
+)
+
+test_datagen = ImageDataGenerator(
+    rescale=1./255,   
+)
