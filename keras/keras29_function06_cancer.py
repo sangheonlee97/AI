@@ -97,7 +97,7 @@ filepath = "".join([path, 'k26_cancer_', date,'_', filename])
 
 mcp = ModelCheckpoint(monitor='val_loss', mode='min', verbose=1, save_best_only=True, filepath=filepath)    
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics='accuracy') # 'mse', 'mae'도 사용가능# accuracy = acc #이진 분류 모델이 나오면 "binary_crossentropy"'#분류모델에서는 mse사용안함                     
-es = EarlyStopping(monitor='val_loss', mode='min', patience=300, verbose=3, restore_best_weights=True)                   #다중 분류 모델에서는 'categorical_crossentropy
+es = EarlyStopping(monitor='val_loss', mode='min', patience=100, verbose=3, restore_best_weights=True)                   #다중 분류 모델에서는 'categorical_crossentropy
 hist = model.fit(X_train, y_train, epochs=5000, batch_size=32, validation_split=0.1, callbacks=[es,mcp])
 
 
