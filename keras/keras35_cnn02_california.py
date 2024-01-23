@@ -1,7 +1,7 @@
 from sklearn.datasets import fetch_california_housing
 from sklearn.model_selection import train_test_split, RandomizedSearchCV
 from keras.models import Sequential, save_model
-from keras.layers import Dense
+from keras.layers import Dense, Conv2D, Flatten
 from sklearn.metrics import r2_score, accuracy_score
 import numpy as np
 import pandas as pd
@@ -16,18 +16,18 @@ datasets = fetch_california_housing()
 X = datasets.data
 y = datasets.target
 
-
-
+# print(X.shape)   # 20640, 8
+X = X.reshape(20640, 4,2,1)
 # [실습]
 # R2 0.55 ~ 0.6
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=1228)
 
-from sklearn.preprocessing import StandardScaler, MinMaxScaler
-scaler = StandardScaler()
-scaler.fit(X_train)
-X_train = scaler.transform(X_train)
-X_test = scaler.transform(X_test)
+# from sklearn.preprocessing import StandardScaler, MinMaxScaler
+# scaler = StandardScaler()
+# scaler.fit(X_train)
+# X_train = scaler.transform(X_train)
+# X_test = scaler.transform(X_test)
 
 
 
@@ -38,9 +38,10 @@ X_test = scaler.transform(X_test)
 # model.add(Dense(1))
 from keras.models import Model
 from keras.layers import Input
-input = Input(shape=(8, ))
-dense1 = Dense(10)(input)
-dense2 = Dense(30)(dense1)
+input = Input(shape=(4,2,1))
+dense1 = Conv2D(10, (2,1), padding='same')(input)
+f = Flatten()(dense1)
+dense2 = Dense(30)(f)
 dense3 = Dense(15)(dense2)
 output = Dense(1)(dense3)
 model = Model(inputs=input, outputs=output)
@@ -60,7 +61,7 @@ es = EarlyStopping(monitor='val_loss', mode='min', patience=10, verbose=1, resto
 
 hist = model.fit(X_train, y_train, epochs=500, batch_size=142, validation_split=0.3, callbacks=[es])
 
-# model.save('..//_data//_save//MCP//keras26_california_1.h5')
+model.save('..//_data//_save//MCP//keras26_california_1.h5')
 end_time = time.time()
 
 y_pred = model.predict(X_test)
@@ -75,3 +76,5 @@ print("걸린 시간 : ", round(end_time - start_time,2), "초")
 
 # cpu : 3.09
 # gpu : 5.46
+# dnn 0.61
+# cnn 0.422

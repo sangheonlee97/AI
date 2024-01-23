@@ -1,6 +1,6 @@
 from sklearn.datasets import load_diabetes
 from keras.models import Sequential
-from keras.layers import Dense
+from keras.layers import Dense, Conv2D, Flatten
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import r2_score, mean_squared_error
 import time
@@ -11,13 +11,14 @@ from sklearn.preprocessing import MinMaxScaler, MaxAbsScaler, StandardScaler, Ro
 datasets = load_diabetes()
 X = datasets.data
 y = datasets.target          
-
+print(X.shape)  # 442 10
+X = X.reshape(442,5,2,1)
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, shuffle=True, random_state=1226)           # 1226 713
 
-mms = MinMaxScaler()
-mms.fit(X_train)
-X_train = mms.transform(X_train)
-X_test = mms.transform(X_test)
+# mms = MinMaxScaler()
+# mms.fit(X_train)
+# X_train = mms.transform(X_train)
+# X_test = mms.transform(X_test)
 
 
 # model = Sequential()
@@ -30,9 +31,10 @@ X_test = mms.transform(X_test)
 
 from keras.models import Model
 from keras.layers import Input
-input = Input(shape=(10, ))
-den = Dense(8)(input)
-den1 = Dense(16)(den)
+input = Input(shape=(5,2, 1 ))
+den = Conv2D(8,(2,1),padding='same', activation='relu')(input)
+f = Flatten()(den)
+den1 = Dense(16)(f)
 den2 = Dense(24)(den1)
 den3 = Dense(16)(den2)
 den4 = Dense(8)(den3)
@@ -72,3 +74,4 @@ print("걸린 시간 : ", round(end_time - start_time,2), "초")
 # cpu : 4.94
 # gpu : 9.9
 # dnn 55.783
+# cnn 49.921
