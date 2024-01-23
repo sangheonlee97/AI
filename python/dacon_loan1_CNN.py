@@ -30,25 +30,25 @@ submission_csv = pd.read_csv(path + "sample_submission.csv")
 train_csv = train_csv.drop(labels='TRAIN_28730',axis=0) # 주택소유 상태가 any인 row 삭제
 
 
-# train_csv.loc[train_csv['근로기간']=='3','근로기간']='3 years'
-# test_csv.loc[test_csv['근로기간']=='3','근로기간']='3 years'
-# train_csv.loc[train_csv['근로기간']=='1 year','근로기간']='1 years'
-# test_csv.loc[test_csv['근로기간']=='1 year','근로기간']='1 years'
-# train_csv.loc[train_csv['근로기간']=='<1 year','근로기간']='< 1 year'
-# test_csv.loc[test_csv['근로기간']=='<1 year','근로기간']='< 1 year'
-# train_csv.loc[train_csv['근로기간']=='10+years','근로기간']='10+ years'
-# test_csv.loc[test_csv['근로기간']=='10+years','근로기간']='10+ years'
+train_csv.loc[train_csv['근로기간']=='3','근로기간']='3 years'
+test_csv.loc[test_csv['근로기간']=='3','근로기간']='3 years'
+train_csv.loc[train_csv['근로기간']=='1 year','근로기간']='1 years'
+test_csv.loc[test_csv['근로기간']=='1 year','근로기간']='1 years'
+train_csv.loc[train_csv['근로기간']=='<1 year','근로기간']='< 1 year'
+test_csv.loc[test_csv['근로기간']=='<1 year','근로기간']='< 1 year'
+train_csv.loc[train_csv['근로기간']=='10+years','근로기간']='10+ years'
+test_csv.loc[test_csv['근로기간']=='10+years','근로기간']='10+ years'
 # 근로기간 컬럼 삭제
-train_csv = train_csv.drop(['근로기간'], axis=1)
-test_csv = test_csv.drop(['근로기간'], axis=1)
+# train_csv = train_csv.drop(['근로기간'], axis=1)
+# test_csv = test_csv.drop(['근로기간'], axis=1)
 
 X = train_csv.drop(['대출등급'], axis=1)
 y = train_csv['대출등급']
 
-# le_work_period = LabelEncoder()
-# le_work_period.fit(X['근로기간'])
-# X['근로기간'] = le_work_period.transform(X['근로기간'])
-# test_csv['근로기간'] = le_work_period.transform(test_csv['근로기간'])
+le_work_period = LabelEncoder()
+le_work_period.fit(X['근로기간'])
+X['근로기간'] = le_work_period.transform(X['근로기간'])
+test_csv['근로기간'] = le_work_period.transform(test_csv['근로기간'])
 
 # print(train_csv['주택소유상태'].value_counts()) # train 데이터에만 "any" 한개 있음,,  27번줄에서 삭제함
 le_own = LabelEncoder()
@@ -75,21 +75,29 @@ le_loan_period.fit(X['대출기간'])
 X['대출기간'] = le_loan_period.transform(X['대출기간'])
 test_csv['대출기간'] = le_loan_period.transform(test_csv['대출기간'])
 
+train_csv.info()
+
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=4, stratify=y)
 
 Scaler = RobustScaler()
 X_train = Scaler.fit_transform(X_train)
 X_test = Scaler.transform(X_test)
 test_csv = Scaler.transform(test_csv)
+
+X_train = X_train.reshape(-1, 13,1,1)
+X_test = X_test.reshape(-1,13 , 1, 1)
+test_csv = test_csv.reshape(-1,13,1,1)
 ######################### DATA End ###############################
 
 
 
 
 ######################## MODELING Start ##########################
-ip = Input(shape=(12, ))
-d1 = Dense(30, activation='relu')(ip)
-d2 = Dense(100, activation='relu')(d1)
+from keras.layers import Conv2D, Flatten
+ip = Input(shape=(13,1,1 ))
+d1 = Conv2D(30,(2,2), padding='same', strides=2, activation='relu')(ip)
+f = Flatten()(d1)
+d2 = Dense(100, activation='relu')(f)
 d3 = Dense(30, activation='relu')(d2)
 d4 = Dense(150, activation='relu')(d3)
 d5 = Dense(100, activation='relu')(d4)
@@ -130,3 +138,6 @@ filename = "".join(["..//_data//_save//dacon_loan_cnn//dacon_loan_cnn_", str(f1.
 model.save(filename + ".h5")
 submission_csv.to_csv(path + "submisson_cnn.csv", index=False)
 save_code_to_file(filename)
+
+# dnn .867
+# cnn .845
