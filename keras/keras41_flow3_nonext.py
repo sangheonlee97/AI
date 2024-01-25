@@ -6,7 +6,13 @@ import matplotlib.pyplot as plt
 train_datagen = ImageDataGenerator(
     rescale=1/255. ,
     horizontal_flip=True,
+    vertical_flip=True,
+    width_shift_range=0.2,
+    height_shift_range=0.2,
+    rotation_range=30,
+    zoom_range=0.2,
     fill_mode='nearest',
+    shear_range=30
     
 )
 
@@ -14,23 +20,22 @@ augumet_size = 100
 # plt.imshow(X_train[0])
 # plt.show()
 # print(X_train.shape) # 60000 28 28
-X_data = train_datagen.flow(
-    np.tile(X_train[0].reshape(28*28),augumet_size).reshape(-1,28,28,1),
+X_data = train_datagen.flow(  # tuple로 return
+    np.tile(X_train[0].reshape(-1),augumet_size).reshape(-1,28,28,1),
     np.zeros(augumet_size),
-    batch_size=60,
+    target_size=(50,50),
+    batch_size=100,
     shuffle=False
 )
-fig, ax = plt.subplots(nrows=3,ncols=5,figsize=(10,10))
+# fig, ax = plt.subplots(nrows=3,ncols=5,figsize=(10,10))
 print("@########################################")
 # print(X_data.next()[0].shape)
-for i in range(15):
-    batch = X_data[1][0][39] 
-    # print(batch)
-    # print(batch.shape)
-    # image = batch[0].astype('uint8')
-    image = batch
-    ax[int(i/5)][i%5].imshow(image)
-    ax[int(i/5)][i%5].axis('off')
+plt.figure(figsize=(7,7))
+
+for i in range(49):
+    plt.subplot(7,7,i+1)
+    plt.axis('off')
+    plt.imshow(X_data[0][0][i], cmap='gray')
     
     # i   : 0 1 2 3 4 5 6 7 8 9
     # i/5 : 0 0 0 0 0 1 1 1 1 1 
