@@ -13,8 +13,8 @@ import matplotlib.pyplot as plt
 
 train_datagen = ImageDataGenerator(
     rescale=1/255.,
-    horizontal_flip=True,   # 수평 뒤집기
-    vertical_flip=True,     # 수직 뒤집기
+    # horizontal_flip=True,   # 수평 뒤집기
+    # vertical_flip=True,     # 수직 뒤집기
     width_shift_range=0.1,  # 가로로 평행이동
     height_shift_range=0.1, # 세로로 평행이동
     rotation_range=5,       # 정해진 각도만큼 이미지를 회전
@@ -71,9 +71,11 @@ model = Sequential()
 model.add(Conv2D(30, (3,3), strides=1, activation='relu', input_shape=(200,200,3)))
 model.add(MaxPooling2D())
 model.add(Conv2D(40, (3,3), strides=2, activation='relu'))
-# model.add(MaxPooling2D())
+model.add(MaxPooling2D())
 # model.add(Conv2D(40, (3,3), strides=2, activation='relu'))
 model.add(Conv2D(40, (3,3), strides=1, activation='relu'))
+model.add(MaxPooling2D())
+
 # model.add(Conv2D(40, (3,3), strides=1, activation='relu'))
 # model.add(Conv2D(40, (3,3), strides=1, activation='relu'))
 model.add(Flatten())
