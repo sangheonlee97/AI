@@ -49,6 +49,8 @@ fig, ax = plt.subplots(nrows=3,ncols=5,figsize=(10,10))
 it = datagen.flow(img,
                   batch_size=1,
                   )
+print(type(it))
+print("dfs;lfajdlfkasdj;lfasjdklfasjd;lfas")
 for i in range(15):
     batch = it.next()
     # print(batch)
