@@ -34,12 +34,12 @@ X_augumented = train_datagen.flow(
     shuffle=False,
 ).next()[0]
 
-print(X_augumented.shape)
+print(X_augumented.shape) # 40000 28 28 1
 X_train = X_train.reshape(-1 , 28 , 28, 1)
 X_test = X_test.reshape(-1 , 28 , 28, 1)
 print(X_train.shape)
 
-X_train = np.concatenate((X_train, X_augumented))
+X_train = np.concatenate((X_train, X_augumented),axis=0)
 y_train = np.concatenate((y_train, y_augumented))
 print(X_train.shape)
 print(y_train.shape)
