@@ -1,9 +1,6 @@
-from keras.models import Sequential
-from keras.layers import Dense
+import numpy as np
 
-model = Sequential()
-model.add(Dense(3,input_dim=3))
-model.add(Dense(2))
-model.add(Dense(3))
-
-model.summary()
+a = np.array(range(10))
+print(a.shape)
+a = a.reshape(2,5)
+print(a[1])
