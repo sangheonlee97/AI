@@ -8,8 +8,9 @@ print("tensorflow version : ", tf.__version__)
 print("python version : ", sys.version)
 
 from keras.preprocessing.image import ImageDataGenerator
-from tensorflow.keras.preprocessing.image import load_img         # 이미지 땡겨와
-from tensorflow.keras.preprocessing.image import img_to_array     # 이미지를 수치화
+# from tensorflow.keras.preprocessing.image import load_img         # 이미지 땡겨와
+# from tensorflow.keras.preprocessing.image import img_to_array     # 이미지를 수치화
+from keras.utils import load_img, img_to_array
 
 path = "..//_data//image//catdog//Test//30.jpg"
 img = load_img(path, 
