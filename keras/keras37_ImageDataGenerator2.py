@@ -65,31 +65,29 @@ print(X_train.shape, y_train.shape)
 print(X_test.shape, y_test.shape)
 print(np.unique(X_train, return_counts=True))
 #2 data
-from keras.models import Model
+from keras.models import Model, Sequential
 from keras.layers import Input
-ip = Input(shape=(200,200,3))
-d1 = Conv2D(50, (3,3), strides=2, activation='relu')(ip)
-mp1 = MaxPooling2D()(d1)
-d2 = Conv2D(30, (3,3), strides=2, activation='relu')(mp1)
-# mp2 = MaxPooling2D()(d2)
-d3 = Conv2D(50, (3,3), strides=2, activation='relu')(d2)
-dr1 = Dropout(0.3)(d3)
-d4 = Conv2D(40, (3,3), strides=1, activation='relu')(dr1)
-dr2 = Dropout(0.3)(d4)
-d5 = Conv2D(40, (3,3), strides=2, activation='relu')(dr2)
+model = Sequential()
+model.add(Conv2D(30, (3,3), strides=1, activation='relu', input_shape=(200,200,3)))
+model.add(MaxPooling2D())
+model.add(Conv2D(40, (3,3), strides=2, activation='relu'))
+# model.add(MaxPooling2D())
+# model.add(Conv2D(40, (3,3), strides=2, activation='relu'))
+model.add(Conv2D(40, (3,3), strides=1, activation='relu'))
+# model.add(Conv2D(40, (3,3), strides=1, activation='relu'))
+# model.add(Conv2D(40, (3,3), strides=1, activation='relu'))
+model.add(Flatten())
+model.add(Dense(500, activation='relu'))
+model.add(Dropout(0.3))
+model.add(Dense(80, activation='relu'))
+model.add(Dense(1, activation='sigmoid'))
 
-f = Flatten()(d5)
-d6 = Dense(500, activation='relu')(f)
-dr = Dropout(0.3)(d6)
-op = Dense(1, activation='sigmoid')(dr)
-
-model = Model(inputs=ip, outputs=op)
 
 #3 compile, fit
 from keras.callbacks import EarlyStopping
-es = EarlyStopping(monitor='val_loss', mode='min', patience=30, verbose=1, restore_best_weights=True )
+es = EarlyStopping(monitor='val_accuracy', mode='max', patience=30, verbose=1, restore_best_weights=True )
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
-model.fit(X_train, y_train, batch_size=5, verbose=1, epochs=10000, validation_split=0.2 , callbacks=[es])
+model.fit(X_train, y_train, batch_size=5, verbose=1, epochs=10000, validation_split=0.08 , callbacks=[es])
 
 #3 evaluate, predict
 res = model.evaluate(X_test, y_test)
