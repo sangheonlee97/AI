@@ -37,11 +37,11 @@ y_aug = y_train[randidx].copy()
 X_aug = data_gen.flow(
     X_aug, y_aug,
     batch_size=aug_size,
-    shuffle=False
+    shuffle=False,
 ).next()[0]
 
-X_train = np.concatenate((X_train, X_aug), axis=0)
-y_train = np.concatenate((y_train, y_aug), axis=0)
+# X_train = np.concatenate((X_train, X_aug), axis=0)
+# y_train = np.concatenate((y_train, y_aug), axis=0)
 
 
 
@@ -68,30 +68,35 @@ X_test = X_test / 255.
 from keras.layers import MaxPooling2D
 
 model = Sequential()
-model.add(Conv2D(60, (2, 2), input_shape=(32, 32, 3), activation='relu') )
-model.add(Conv2D(130, (2, 2), activation='relu'))
+model.add(Conv2D(30, (3, 3), input_shape=(32,32,3), activation='relu'))
+# model.add(MaxPooling2D())
+
+model.add(Conv2D(20, (3,3), activation='relu'))
 model.add(MaxPooling2D())
-model.add(Conv2D(130, (2, 2), activation='relu'))
-model.add(Conv2D(150, (2, 2), activation='relu'))
-model.add(Conv2D(150, (2, 2), activation='relu'))
-model.add(Conv2D(150, (2, 2), activation='relu'))
-# model.add(Conv2D(160, (3, 3), activation='relu'))
-# model.add(Conv2D(130, (3, 3), activation='relu'))
+
+model.add(Conv2D(20, (3,3), activation='relu'))
+# model.add(MaxPooling2D())
+
+model.add(Conv2D(20, (3,3), activation='relu'))
+model.add(MaxPooling2D())
+
 model.add(Flatten())
-model.add(Dense(500, activation='relu'))
-model.add(Dropout(0.5))
-model.add(Dense(500, activation='relu'))
-model.add(Dropout(0.5))
-model.add(Dense(100, activation='softmax'))
+model.add(Dense(300, activation='relu'))
+model.add(Dropout(0.2))
+model.add(Dense(100, activation='relu'))
+model.add(Dropout(0.2))
+model.add(Dense(100,activation='softmax'))
 
 model.summary()
 
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 es = EarlyStopping(monitor='val_loss', mode='min', patience=20, restore_best_weights=True, verbose=1)
-model.fit(X_train, y_train, epochs=1000, batch_size=500, validation_split=0.15, callbacks=[es], verbose=1)
+model.fit(X_train, y_train, epochs=1, batch_size=500, validation_split=0.15, callbacks=[es], verbose=1)
 
 res = model.evaluate(X_test, y_test)
 
 print("acc : ", res[1])
-# just  : 0.3962
-# aug   : 0.3862                (90000): 0.3806
+import os
+print("flie : ",os.path.basename(__file__))
+# just  : 0.3962                .3662
+# aug   : 0.3862                .3573
