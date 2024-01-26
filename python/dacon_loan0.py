@@ -6,6 +6,7 @@ from keras.callbacks import EarlyStopping
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import OneHotEncoder, LabelEncoder, RobustScaler, MinMaxScaler, StandardScaler, OrdinalEncoder
 from sklearn.metrics import f1_score
+import matplotlib.pyplot as plt
 import os
 def save_code_to_file(filename=None):
     if filename is None:
@@ -20,13 +21,19 @@ def save_code_to_file(filename=None):
         file.write(code)
 path = "..\\_data\\dacon\\daechul\\"
 
-
-
-############################# DATA Start  #############################
 train_csv = pd.read_csv(path + "train.csv", index_col='ID')
 test_csv = pd.read_csv(path + "test.csv", index_col='ID')
 submission_csv = pd.read_csv(path + "sample_submission.csv")
 
+############################# EDA Start ###############################
+plt.figure(figsize=(10, 10))
+loangrade = train_csv['대출등급'].value_counts()
+plt.pie(loangrade, labels=loangrade.index, autopct='%.4f', startangle=90)
+plt.show()
+
+############################# EDA End #################################
+
+############################# DATA Start  #############################
 train_csv = train_csv.drop(labels='TRAIN_28730',axis=0) # 주택소유 상태가 any인 row 삭제
 
 
