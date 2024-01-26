@@ -30,7 +30,7 @@ print(np.unique(y_test, return_counts=True)) # 0 ~ 9
 # print(X_test)
 print(y_train.shape)
 print(y_test.shape)
-aug_size = 90000
+aug_size = 30000
 randidx = np.random.randint(50000, size=aug_size)
 X_aug = X_train[randidx].copy()
 y_aug = y_train[randidx].copy()
@@ -94,4 +94,4 @@ res = model.evaluate(X_test, y_test)
 
 print("acc : ", res[1])
 # just  : 0.3962
-# aug   : 0.3862
+# aug   : 0.3862                (90000): 0.3806
