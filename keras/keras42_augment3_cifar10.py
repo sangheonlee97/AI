@@ -17,6 +17,32 @@ print(X_train.shape, X_test.shape) # (50000, 32, 32, 3) (10000, 32, 32, 3)
 # print(y_train)
 # print(y_test)
 
+data_gen = ImageDataGenerator(
+    # rescale=1/255. ,
+    horizontal_flip=True,
+    vertical_flip=True,
+    width_shift_range=0.2,
+    height_shift_range=0.2,
+    rotation_range=30,
+    zoom_range=0.2,
+    fill_mode='nearest',
+    shear_range=10
+)
+aug_size = 30000
+randidx = np.random.randint(50000, size=aug_size)
+X_aug = X_train[randidx].copy()
+y_aug = y_train[randidx].copy()
+
+X_aug = data_gen.flow(
+    X_aug,
+    y_aug,
+    batch_size=aug_size,
+    shuffle=False
+)
+
+X_aug = np.concatenate((X_train,X_aug[0][0]),axis=0)
+y_aug = np.concatenate((y_train,y_aug),axis=0)
+
 ohe = OneHotEncoder(sparse=False)
 y_train = ohe.fit_transform(y_train)
 y_test = ohe.transform(y_test)
@@ -51,3 +77,6 @@ model.fit(X_train, y_train, epochs=1000, batch_size=500, validation_split=0.1, c
 res = model.evaluate(X_test, y_test)
 
 print("acc : ", res[1])
+
+# just  : 0.6908
+# aug   : 0.6880

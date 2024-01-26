@@ -79,5 +79,5 @@ res = model.evaluate(X_test, y_test)
 
 print("acc : ", res[1])
 
-# 증폭 : 0.9886
 # 그냥 : 0.9832
+# 증폭 : 0.9886
