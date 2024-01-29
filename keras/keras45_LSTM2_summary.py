@@ -26,7 +26,7 @@ model.add(Dense(1))
 
 model.summary()
 
-# # 3. compile
+# 3. compile
 # model.compile(loss='mse', optimizer='adam')
 # model.fit(X, y, epochs=500, batch_size=1,)
 # # 4. evaluate
