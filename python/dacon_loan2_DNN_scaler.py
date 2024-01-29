@@ -27,10 +27,10 @@ test_csv = pd.read_csv(path + "test.csv", index_col='ID')
 submission_csv = pd.read_csv(path + "sample_submission.csv")
 
 ############################# EDA Start ###############################
-plt.figure(figsize=(10, 10))
-loangrade = train_csv['대출등급'].value_counts()
-plt.pie(loangrade, labels=loangrade.index, autopct='%.4f', startangle=90)
-plt.show()
+# plt.figure(figsize=(10, 10))
+# loangrade = train_csv['대출등급'].value_counts()
+# plt.pie(loangrade, labels=loangrade.index, autopct='%.4f', startangle=90)
+# plt.show()
 
 ############################# EDA End #################################
 
@@ -79,13 +79,31 @@ le_loan_period = LabelEncoder()
 le_loan_period.fit(X['대출기간'])
 X['대출기간'] = le_loan_period.transform(X['대출기간'])
 test_csv['대출기간'] = le_loan_period.transform(test_csv['대출기간'])
-
+# X = X.drop(['총연체금액'],axis=1)
+# X = X.drop(['연체계좌수'],axis=1)
+# test_csv = test_csv.drop(['총연체금액'],axis=1)
+# test_csv = test_csv.drop(['연체계좌수'],axis=1)
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=4, stratify=y)
+# print(np.unique(X_train['연체계좌수'], return_counts=True))
 
-Scaler = RobustScaler()
+Scaler = RobustScaler(quantile_range=(5,95))
 X_train = Scaler.fit_transform(X_train)
 X_test = Scaler.transform(X_test)
 test_csv = Scaler.transform(test_csv)
+
+# RS = [
+#         '대출금액',
+#         '연간소득',
+#         '부채_대비_소득_비율',
+#         '총계좌수',
+#         '대출목적',
+#         '총상환원금',
+#         '총상환이자',
+# ]
+# Scaler = StandardScaler()
+# X_train[RS] = Scaler.fit_transform(X_train[RS])
+# X_test[RS] = Scaler.transform(X_test[RS])
+# test_csv[RS] = Scaler.transform(test_csv[RS])
 ######################### DATA End ###############################
 
 
@@ -93,12 +111,12 @@ test_csv = Scaler.transform(test_csv)
 
 ######################## MODELING Start ##########################
 ip = Input(shape=(13, ))
-d1 = Dense(30, activation='relu')(ip)
-d2 = Dense(100, activation='relu')(d1)
-d3 = Dense(30, activation='relu')(d2)
-d4 = Dense(150, activation='relu')(d3)
-d5 = Dense(100, activation='relu')(d4)
-d6 = Dense(50, activation='relu')(d5)
+d1 = Dense(30, activation='swish')(ip)
+d2 = Dense(100, activation='swish')(d1)
+d3 = Dense(30, activation='swish')(d2)
+d4 = Dense(150, activation='swish')(d3)
+d5 = Dense(100, activation='swish')(d4)
+d6 = Dense(50, activation='swish')(d5)
 op = Dense(7, activation='softmax')(d6)
 model = Model(inputs=ip, outputs=op)
 ######################## MODELING End ############################
@@ -131,7 +149,7 @@ y_sub = pd.DataFrame(y_sub)
 ######################## SUBMISSION ##############################
 submission_csv['대출등급'] = y_sub
 # print(sub_csv['대출등급'])
-filename = "".join(["..//_data//_save//dacon_loan_0//dacon_loan_0_", str(f1.round(4))])
+filename = "".join(["..//_data//_save//dacon_loan_2//dacon_loan_2_", str(f1.round(4))])
 model.save(filename + ".h5")
-submission_csv.to_csv(path + "submisson_0.csv", index=False)
+submission_csv.to_csv(path + "submisson_2.csv", index=False)
 save_code_to_file(filename)
