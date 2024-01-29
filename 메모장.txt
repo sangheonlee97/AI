@@ -112,3 +112,12 @@ train_datagen = ImageDataGenerator(
 test_datagen = ImageDataGenerator(
     rescale=1./255,   
 )
+
+//
+
+데이터 증폭 :   라벨값의 비중이 차이나는 경우 특정 라벨 값에 대한 예측이 어려워진다.
+                그래서 데이터의 양이 적은 라벨에 증폭을 해줘서 다른 라벨 값들과 비율을 똑같이 맞춰주면 성능이 더 좋아진다.
+
+from imblearn.over_sampling import SMOTE
+smote = SMOTE(random_state=42)
+X_train, y_train = smote.fit_resample(X_train, y_train)
