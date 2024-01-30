@@ -15,7 +15,7 @@ from keras.layers import Dropout
 from keras.callbacks import EarlyStopping
 es = EarlyStopping(monitor='loss', mode='min', patience=150, restore_best_weights=True)
 model = Sequential()
-model.add(Bidirectional(LSTM(50), input_shape=(3,1)))
+model.add(Bidirectional(SimpleRNN(50), input_shape=(3,1)))
 model.add(Dense(570, activation='relu'))
 model.add(Dense(370, activation='relu'))
 model.add(Dense(170, activation='relu'))
@@ -25,11 +25,12 @@ model.add(Dense(1))
 
 model.summary()
 
-# # 3. compile
-# model.compile(loss='mse', optimizer='adam')
-# model.fit(X, y, epochs=500, batch_size=1,)
-# # 4. evaluate
-# res = model.evaluate(X,y)
-# print("loss : ", res)
-# y_pred = model.predict([[[8],[9],[10]]])
-# print("predict : ", y_pred)
+# 3. compile
+model.compile(loss='mse', optimizer='adam')
+model.fit(X, y, epochs=500, batch_size=1,)
+# 4. evaluate
+res = model.evaluate(X,y)
+print("loss : ", res)
+y_pred = model.predict([[[8],[9],[10]]])
+print("predict : ", y_pred)
+# 0.02235
