@@ -48,7 +48,7 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2 , random
 
 ############ 2. model ###################
 model = Sequential()
-model.add(LSTM(30, input_shape=(3,14)))
+model.add(GRU(30, input_shape=(3,14)))
 model.add(Dense(64, activation='relu'))
 model.add(Dense(128, activation='relu'))
 model.add(Dense(256, activation='relu'))
@@ -92,3 +92,10 @@ print("r2 : ", r2)
 # r2 :  0.9989577108626988
 
 ##################여기까진 early stopping이 아닌, 모든 epoch를 다 통과함. 여기부턴 epochs를 늘리고 earlystop을 통해 나온 값
+# LSTM
+# loss :  1.0822236617968883e-05
+# r2 :  0.999399485133266
+
+# GRU
+# loss :  1.0810655112436507e-05
+# r2 :  0.9994001282091352
