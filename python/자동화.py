@@ -151,7 +151,7 @@ def auto(rs, ts, bs, qr, test_csv):
     ######################## SUBMISSION ##############################
     submission_csv['대출등급'] = y_sub
     # print(sub_csv['대출등급'])
-    if f1 > 0.91:
+    if f1 > 0.9:
         filename = "".join(["..//_data//_save//dacon_loan_2//dacon_loan_2_auto_", "rs_",str(rs), "_bs_", str(bs), "_ts_", str(ts),"_qr_",str(qr) ,"_f1_", str(f1.round(4))])
         model.save(filename + ".h5")
         submission_csv.to_csv(path + "submisson_2_auto.csv", index=False)
@@ -165,6 +165,6 @@ for i in range(100000):
     bs = random.randrange(500,5000)
     ts = random.randrange(10,30) / 100
     qr = random.randrange(1,21)
-    a = auto(rs, ts, bs, qr, test_csv)
+    a = auto(4, 0.1, bs, qr, test_csv)
     if a > 0.95:
         break
