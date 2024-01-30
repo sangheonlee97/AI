@@ -113,12 +113,12 @@ def auto(rs, ts, bs, qr, test_csv):
 
     ######################## MODELING Start ##########################
     ip = Input(shape=(13, ))
-    d1 = Dense(30, activation='swish')(ip)
-    d2 = Dense(100, activation='swish')(d1)
-    d3 = Dense(30, activation='swish')(d2)
-    d4 = Dense(150, activation='swish')(d3)
-    d5 = Dense(100, activation='swish')(d4)
-    d6 = Dense(50, activation='swish')(d5)
+    d1 = Dense(19, activation='swish')(ip)
+    d2 = Dense(97, activation='swish')(d1)
+    d3 = Dense(9, activation='swish')(d2)
+    d4 = Dense(21, activation='swish')(d3)
+    d5 = Dense(16, activation='swish')(d4)
+    d6 = Dense(21, activation='swish')(d5)
     op = Dense(7, activation='softmax')(d6)
     model = Model(inputs=ip, outputs=op)
     ######################## MODELING End ############################
@@ -152,7 +152,7 @@ def auto(rs, ts, bs, qr, test_csv):
     submission_csv['대출등급'] = y_sub
     # print(sub_csv['대출등급'])
     if f1 > 0.9:
-        filename = "".join(["..//_data//_save//dacon_loan_2//dacon_loan_2_auto_", "rs_",str(rs), "_bs_", str(bs), "_ts_", str(ts),"_qr_",str(qr) ,"_f1_", str(f1.round(4))])
+        filename = "".join(["..//_data//_save//dacon_loan_2//dacon_loan_2_auto_130_", "rs_",str(rs), "_bs_", str(bs), "_ts_", str(ts),"_qr_",str(qr) ,"_f1_", str(f1.round(4))])
         model.save(filename + ".h5")
         submission_csv.to_csv(path + "submisson_2_auto.csv", index=False)
         save_code_to_file(filename)
@@ -165,6 +165,6 @@ for i in range(100000):
     bs = random.randrange(500,5000)
     ts = random.randrange(10,30) / 100
     qr = random.randrange(1,21)
-    a = auto(4, 0.1, bs, qr, test_csv)
+    a = auto(rs, 0.1, bs, qr, test_csv)
     if a > 0.95:
         break
