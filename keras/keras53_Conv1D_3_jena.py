@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 from keras.models import Sequential
-from keras.layers import LSTM, GRU, Dense
+from keras.layers import LSTM, GRU, Dense, Flatten, Conv1D
 from sklearn.metrics import r2_score
 from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
@@ -52,7 +52,8 @@ print("split end")
 
 ############ 2. model ###################
 model = Sequential()
-model.add(LSTM(30, input_shape=( 24 * 5, 14)))
+model.add(Conv1D(30,3, padding='same', input_shape=( 24 * 5, 14)))
+model.add(Flatten())
 model.add(Dense(64, activation='relu'))
 model.add(Dense(128, activation='relu'))
 model.add(Dense(256, activation='relu'))
@@ -65,44 +66,22 @@ model.summary()
 sttime = time.time()
 model.compile(loss='mse', optimizer='adam')
 es = EarlyStopping(monitor='val_loss', mode='min', patience=100, restore_best_weights=True)
-model.fit(X_train, y_train, epochs=1, batch_size=1000, validation_split=0.2, callbacks=[es])
+model.fit(X_train, y_train, epochs=3000, batch_size=3000, validation_split=0.2, callbacks=[es])
 edtime = time.time()
 ############ 4. eva ###################
-res = model.evaluate(X_test, y_test)
+res = model.evaluate(X_test, y_test, batch_size=3000)
+y_pred = model.predict(X_test, batch_size=3000)
 
-y_pred = model.predict(X_test)
 r2 = r2_score(y_test, y_pred)
 print("loss : ", res)
 print("r2 : ", r2)
 print("걸린시간 : ", int(edtime - sttime))
-# LSTM  전처리 싹다
-# loss :  0.002523343311622739
-# r2 :  0.8602245009517633
-# 걸린시간 :  203 초
 
-# LSTM NO 전처리
-# loss :  10.005688667297363
-# r2 :  0.8475204954112067
-# 걸린시간 :  497
+# Conv1D padding='valid'
+# loss :  0.0030131444800645113
+# r2 :  0.8330928635466982
+# 걸린시간 :  88
 
-# LSTM 전처리 MinMax 스케일링만
-# loss :  0.0026046873535960913
-# r2 :  0.855718636585975
-# 걸린시간 :  275
-
-# LSTM 전처리 MinMax 스케일링, sqrt
-# loss :  0.0026112545747309923
-# r2 :  0.8553548446975112
-# 걸린시간 :  222
-
-# GRU
-# loss :  0.002643501153215766
-# r2 :  0.8535686623729211
-# 걸린시간 :  207 초
-################################################## 위 1시간 단위
-
-################################################## 아래 30분 단위
-# LSTM 전처리 싹다 + 40분 단위
-# loss :  0.002702952129766345
-# r2 :  0.8502755834110529
-# 걸린시간 :  282
+# loss :  0.002925553359091282
+# r2 :  0.8379450312867425
+# 걸린시간 :  96
