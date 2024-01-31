@@ -15,7 +15,7 @@ from keras.callbacks import EarlyStopping
 
 
 path = "..//_data//kaggle//jena//"
-X = np.load(path + "jena_X.npy")        # timestep = 3
+X = np.load(path + "jena_X.npy")        # timestep = 6 * 24
 y = np.load(path + "jena_y.npy")
 
 # print(X.shape)  # (420548, 3, 14)
@@ -48,7 +48,7 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2 , random
 
 ############ 2. model ###################
 model = Sequential()
-model.add(GRU(30, input_shape=(3,14)))
+model.add(GRU(30, input_shape=(6 * 24,14)))
 model.add(Dense(64, activation='relu'))
 model.add(Dense(128, activation='relu'))
 model.add(Dense(256, activation='relu'))
@@ -59,7 +59,7 @@ model.summary()
 
 ############ 3. compile ################
 model.compile(loss='mse', optimizer='adam')
-es = EarlyStopping(monitor='val_loss', mode='min', patience=100, restore_best_weights=True)
+es = EarlyStopping(monitor='val_loss', mode='min', patience=50, restore_best_weights=True)
 model.fit(X_train, y_train, epochs=3000, batch_size=1000, validation_split=0.2, callbacks=[es])
 
 ############ 4. eva ###################
