@@ -83,9 +83,9 @@ test_csv['대출기간'] = le_loan_period.transform(test_csv['대출기간'])
 # X = X.drop(['연체계좌수'],axis=1)
 # test_csv = test_csv.drop(['총연체금액'],axis=1)
 # test_csv = test_csv.drop(['연체계좌수'],axis=1)
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=4, stratify=y)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=1446378019, stratify=y)
 
-Scaler = RobustScaler(quantile_range=(26 - 9, 74 + 9))
+Scaler = RobustScaler(quantile_range=(26 - 5, 74 + 5))
 X_train = Scaler.fit_transform(X_train)
 X_test = Scaler.transform(X_test)
 test_csv = Scaler.transform(test_csv)
@@ -106,9 +106,10 @@ test_csv = Scaler.transform(test_csv)
 # es = EarlyStopping(monitor='val_loss', mode='min', patience=300, verbose=1, restore_best_weights=True)
 # model.fit(X_train, y_train, epochs=100000, batch_size=500, validation_split=0.1, callbacks=[es])
 
-model = load_model("..//_data//_save//dacon_loan_2//dacon_loan_2_auto_rs_4_bs_763_ts_0.1_qr_9_f1_0.9099.h5")
-# es = EarlyStopping(monitor='val_loss', mode='min', patience=100, verbose=1, restore_best_weights=True)
-# model.fit(X_train, y_train, epochs=100000, batch_size=1388, validation_split=0.21, callbacks=[es])
+model = load_model("..//_data//_save//dacon_loan_2//dacon_loan_2_auto_130_rs_1446378019_bs_4288_ts_0.1_qr_5_f1_0.9195.h5")
+
+es = EarlyStopping(monitor='val_loss', mode='min', patience=100, verbose=1, restore_best_weights=True)
+model.fit(X_train, y_train, epochs=100000, batch_size=1388, validation_split=0.1, callbacks=[es])
 
 ############### 4. evaluated, predict ##########
 results = model.evaluate(X_test, y_test)
@@ -131,5 +132,5 @@ y_sub = pd.DataFrame(y_sub)
 
 submission_csv['대출등급'] = y_sub
 # print(sub_csv['대출등급'])
-submission_csv.to_csv(path + "submisson_130_2.csv", index=False)
+submission_csv.to_csv(path + "submisson_131_2.csv", index=False)
 
