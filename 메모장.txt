@@ -121,3 +121,11 @@ test_datagen = ImageDataGenerator(
 from imblearn.over_sampling import SMOTE
 smote = SMOTE(random_state=42)
 X_train, y_train = smote.fit_resample(X_train, y_train)
+
+//
+
+text데이터를 Tokenizer()를 통해 학습시키려 할 때 원핫 인코딩을 안하면 라벨값에 따라 가중치가 부여되고, 원핫 인코딩을 하자니 그 가지수가 너무 커져서
+값에 0이 너무 많아진다. 그래서 사용하는 방법이 임베딩이다
+
+//
+
