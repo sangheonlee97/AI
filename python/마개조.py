@@ -112,33 +112,43 @@ test_csv = Scaler.transform(test_csv)
 
 model = load_model("..//_data//_save//dacon_loan_Rob_119_0.9456_ts0.26_rs8718650_bs5284_vs0.22.h5")
 
-es = EarlyStopping(monitor='val_loss', mode='min', patience=50, verbose=1, restore_best_weights=True)
-model.fit(X_train, y_train, epochs=100000, batch_size=1000, validation_split=0.26, callbacks=[es])
-model.fit(X_train, y_train, epochs=100000, batch_size=1000, validation_split=0.1, callbacks=[es])
-model.fit(X_train, y_train, epochs=100000, batch_size=1000, validation_split=0.2, callbacks=[es])
-model.fit(X_train, y_train, epochs=100000, batch_size=1000, validation_split=0.17, callbacks=[es])
-model.fit(X_train, y_train, epochs=100000, batch_size=1000, validation_split=0.05, callbacks=[es])
+def daconsibal(vs, bs, X_train, X_test, y_train, y_test):
+    es = EarlyStopping(monitor='val_loss', mode='min', patience=50, verbose=1, restore_best_weights=True)
+    model.fit(X_train, y_train, epochs=100000, batch_size=bs, validation_split=vs, callbacks=[es])
 
-############### 4. evaluated, predict ##########
-results = model.evaluate(X_test, y_test)
+    ############### 4. evaluated, predict ##########
+    results = model.evaluate(X_test, y_test)
 
 
 
-y_pred = model.predict(X_test)
-y_pred = ohe.inverse_transform(y_pred)
-y_test = ohe.inverse_transform(y_test)
-f1 = f1_score(y_test, y_pred, average='macro')
-print("loss : ", results[0])
-print("acc : ", results[1])
-print("f1 : ", f1)
-y_sub = model.predict(test_csv)
-y_sub = ohe.inverse_transform(y_sub)
-y_sub = pd.DataFrame(y_sub)
+    y_pred = model.predict(X_test)
+    y_pred = ohe.inverse_transform(y_pred)
+    y_test = ohe.inverse_transform(y_test)
+    f1 = f1_score(y_test, y_pred, average='macro')
+    print("loss : ", results[0])
+    print("acc : ", results[1])
+    print("f1 : ", f1)
+    
+    if f1 > 0.95:
+        y_sub = model.predict(test_csv)
+        y_sub = ohe.inverse_transform(y_sub)
+        y_sub = pd.DataFrame(y_sub)
 
 
+        submission_csv['대출등급'] = y_sub
+        # print(sub_csv['대출등급'])
+        filename = "".join(["..//_data//_save//dacon_loan_마개조1//dacon_loan_마개조_", "rs_8718650", "_bs_", str(bs), "_ts_26","_f1_", str(f1.round(4))])
+        model.save(filename + ".h5")
+        rfilename = "".join(["..//_data//_save//dacon_loan_마개조1//dacon_loan_마개조_", "rs_8718650", "_bs_", str(bs), "_ts_26","_f1_", str(f1.round(4)), ".csv"])
+        submission_csv.to_csv(rfilename , index=False)
+        save_code_to_file(filename)
+    return f1
 
-
-submission_csv['대출등급'] = y_sub
-# print(sub_csv['대출등급'])
-submission_csv.to_csv(path + "submisson_0201_1.csv", index=False)
-
+import random
+while True:
+    vs = random.randrange(5, 30) / 100
+    bs = random.randrange(10, 5000)
+    f = daconsibal(vs, bs, X_train, X_test, y_train, y_test)
+    if f > 0.99:
+        print("good")
+        break
