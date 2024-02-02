@@ -1,3 +1,8 @@
+# LabelEncoding     : 대출기간, 근로기간    ->  MinMaxScaling
+# OneHotEncondig    : 주택소유, 대출목적
+# 수치형 데이터     ->  StandardScaling
+
+
 import numpy as np
 import pandas as pd
 from keras.models import Model
@@ -50,25 +55,52 @@ test_csv.loc[test_csv['근로기간']=='10+years','근로기간']='10+ years'
 X = train_csv.drop(['대출등급'], axis=1)
 y = train_csv['대출등급']
 
+
+
 le_work_period = LabelEncoder()
 le_work_period.fit(X['근로기간'])
 X['근로기간'] = le_work_period.transform(X['근로기간'])
 test_csv['근로기간'] = le_work_period.transform(test_csv['근로기간'])
 
 # print(train_csv['주택소유상태'].value_counts()) # train 데이터에만 "any" 한개 있음,,  27번줄에서 삭제함
-le_own = LabelEncoder()
-le_own.fit(X['주택소유상태'])
-X['주택소유상태'] = le_own.transform(X['주택소유상태'])
-test_csv['주택소유상태'] = le_own.transform(test_csv['주택소유상태'])
+ohe_own = OneHotEncoder(sparse_output=False)
+t = X.loc[:,'주택소유상태']
+t = t.values.reshape(-1, 1)
+ohe_own.fit(t)
+t = ohe_own.transform(t)
+X = X.drop(['주택소유상태'], axis=1)
+X = np.concatenate([X, t], axis=1)
+X = pd.DataFrame(X)
+
+t = test_csv.loc[:, '주택소유상태']
+t = t.values.reshape(-1, 1)
+t = ohe_own.transform(t)
+test_csv = test_csv.drop(['주택소유상태'], axis=1)
+test_csv = np.concatenate([test_csv, t], axis=1)
+# test_csv['주택소유상태'] = ohe_own.transform(test_csv['주택소유상태'])
 
 
 # print(train_csv['대출목적'].value_counts())
 # test_csv.iloc[34486,6] = '부채 통합'     # 결혼 -> 부채 통합 으로 임의로 바꿈 : 원래 7
-test_csv.loc[test_csv['대출목적']=='결혼', '대출목적'] = '부채 통합'
-le_purpose = LabelEncoder()
-le_purpose.fit(X['대출목적'])
-X['대출목적'] = le_purpose.transform(X['대출목적'])
-test_csv['대출목적'] = le_purpose.transform(test_csv['대출목적'])
+test_csv = pd.DataFrame(test_csv)
+test_csv.iloc[test_csv[6]=='결혼', 6] = '부채 통합'
+ohe_purpose = OneHotEncoder(sparse_output=False)
+t = X.iloc[:,6]
+t = t.values.reshape(-1, 1)
+ohe_purpose.fit(t)
+t = ohe_purpose.transform(t)
+X = X.drop([6], axis=1)
+X = np.concatenate([X, t], axis=1)
+X = pd.DataFrame(X)
+
+t = test_csv.iloc[:, 6]
+t = t.values.reshape(-1, 1)
+t = ohe_purpose.transform(t)
+test_csv = test_csv.drop([6], axis=1)
+test_csv = np.concatenate([test_csv, t], axis=1)
+test_csv = pd.DataFrame(test_csv)
+
+# test_csv['대출목적'] = ohe_purpose.transform(test_csv['대출목적'])
 
 y = y.values.reshape(-1, 1)
 ohe = OneHotEncoder(sparse=False)
@@ -76,50 +108,63 @@ ohe.fit(y)
 y = ohe.transform(y)
 
 le_loan_period = LabelEncoder()
-le_loan_period.fit(X['대출기간'])
-X['대출기간'] = le_loan_period.transform(X['대출기간'])
-test_csv['대출기간'] = le_loan_period.transform(test_csv['대출기간'])
+le_loan_period.fit(X[1])
+X[1] = le_loan_period.transform(X[1])
+test_csv[1] = le_loan_period.transform(test_csv[1])
 # X = X.drop(['총연체금액'],axis=1)
 # X = X.drop(['연체계좌수'],axis=1)
 # test_csv = test_csv.drop(['총연체금액'],axis=1)
 # test_csv = test_csv.drop(['연체계좌수'],axis=1)
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=4, stratify=y)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=4, stratify=y)
 # print(np.unique(X_train['연체계좌수'], return_counts=True))
 
-# Scaler = RobustScaler(quantile_range=(25,75))
-Scaler = StandardScaler()
-X_train = Scaler.fit_transform(X_train)
-X_test = Scaler.transform(X_test)
-test_csv = Scaler.transform(test_csv)
+print(X_train.shape)
+print(X_train)
 
-# RS = [
-#         '대출금액',
-#         '연간소득',
-#         '부채_대비_소득_비율',
-#         '총계좌수',
-#         #'대출목적',
-#         '총상환원금',
-#         '총상환이자',
-#         '총연체금액',
-#         '연체계좌수'
-# ]
+
 # Scaler = StandardScaler()
-# X_train[RS] = Scaler.fit_transform(X_train[RS])
-# X_test[RS] = Scaler.transform(X_test[RS])
-# test_csv[RS] = Scaler.transform(test_csv[RS])
+# X_train = Scaler.fit_transform(X_train)
+# X_test = Scaler.transform(X_test)
+# test_csv = Scaler.transform(test_csv)
+
+RS = [
+    0,3,4,5,7,8
+]
+Scaler = RobustScaler()
+X_train[RS] = Scaler.fit_transform(X_train[RS])
+X_test[RS] = Scaler.transform(X_test[RS])
+test_csv[RS] = Scaler.transform(test_csv[RS])
+X_train = X_train.astype('float32')
+X_test = X_test.astype('float32')
+test_csv = test_csv.astype('float32')
+
+MS = [
+    6,9,10
+]
+
+Scaler = MinMaxScaler()
+X_train[MS] = Scaler.fit_transform(X_train[MS])
+X_test[MS] = Scaler.transform(X_test[MS])
+test_csv[MS] = Scaler.transform(test_csv[MS])
+X_train = X_train.astype('float32')
+X_test = X_test.astype('float32')
+test_csv = test_csv.astype('float32')
+
+
 ######################### DATA End ###############################
 
 
 
 
 ######################## MODELING Start ##########################
-ip = Input(shape=(13, ))
-d1 = Dense(30, activation='swish')(ip)
-d2 = Dense(100, activation='swish')(d1)
-d3 = Dense(30, activation='swish')(d2)
-d4 = Dense(150, activation='swish')(d3)
-d5 = Dense(100, activation='swish')(d4)
-d6 = Dense(50, activation='swish')(d5)
+ip = Input(shape=(26, ))
+d1 = Dense(32, activation='swish')(ip)
+d2 = Dense(64, activation='swish')(d1)
+d3 = Dense(128, activation='swish')(d2)
+d4 = Dense(256, activation='swish')(d3)
+d5 = Dense(512, activation='swish')(d4)
+do = Dropout(0.3)(d5)
+d6 = Dense(128, activation='swish')(do)
 op = Dense(7, activation='softmax')(d6)
 model = Model(inputs=ip, outputs=op)
 ######################## MODELING End ############################
@@ -131,7 +176,7 @@ model = Model(inputs=ip, outputs=op)
 ######################## COMPILE, FIT Start ######################
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 es = EarlyStopping(monitor='val_loss', mode='min', patience=100, verbose=1, restore_best_weights=True)
-model.fit(X_train, y_train, epochs=10000, batch_size=1500, validation_split=0.2, callbacks=[es])
+model.fit(X_train, y_train, epochs=10000, batch_size=3000, validation_split=0.1, callbacks=[es])
 ######################## COMPILE, FIT End ########################
 
 ######################## EVALUTATE, PREDICT Start ################
