@@ -158,45 +158,29 @@ test_csv[MS] = Scaler.transform(test_csv[MS])
 
 
 ######################## MODELING Start ##########################
-def auto(ne, md, rs, mss, msl, mf,X_train, y_train, X_test, y_test, test_csv):
-    rfc = RandomForestClassifier(n_estimators=ne, max_depth=md, random_state=rs, min_samples_split=mss, min_samples_leaf=msl, max_features=mf)
-    rfc.fit(X_train, y_train)
-    ######################## COMPILE, FIT End ########################
+rfc = RandomForestClassifier(n_estimators=20, max_depth=20, random_state=4, criterion='entropy')
+rfc.fit(X_train, y_train)
+######################## COMPILE, FIT End ########################
 
-    ######################## EVALUTATE, PREDICT Start ################
-    y_pred = rfc.predict(X_test)
-    y_pred = ohe.inverse_transform(y_pred)
-    y_test = ohe.inverse_transform(y_test)
-    f1 = f1_score(y_test, y_pred, average='macro')
-    print("f1 : ", f1)
+######################## EVALUTATE, PREDICT Start ################
+y_pred = rfc.predict(X_test)
+y_pred = ohe.inverse_transform(y_pred)
+y_test = ohe.inverse_transform(y_test)
+f1 = f1_score(y_test, y_pred, average='macro')
+print("f1 : ", f1)
 
-    y_sub = rfc.predict(test_csv)
-    y_sub = ohe.inverse_transform(y_sub)
-    y_sub = pd.DataFrame(y_sub)
+y_sub = rfc.predict(test_csv)
+y_sub = ohe.inverse_transform(y_sub)
+y_sub = pd.DataFrame(y_sub)
 ######################## EVALUTATE, PREDICT End ##################
 
 
 
 
 ######################## SUBMISSION ##############################
-    submission_csv['대출등급'] = y_sub
-    # print(sub_csv['대출등급'])
-    filename = "".join(["..//_data//dacon//daechul//dacon_loan_rf//dacon_loan_rf_", str(f1.round(4)),"_ne",str(ne), "_md", str(md), "_mss", str(mss), "_msl", str(msl), "_mf", mf, "_rs" , str(rs)  , ".csv"])
-    # rfc.save(filename + ".h5")
-    if f1 > 0.7:
-        submission_csv.to_csv(filename, index=False)
-        save_code_to_file(filename)
-    return f1
-
-import random
-mfarr = ['sqrt', 'log2']
-while True:
-    ne = random.randrange(80, 501)
-    md = random.randrange(10, 101)
-    mss = random.randrange(2, 11)
-    msl = random.randrange(1, 11)
-    mf = random.randrange(0, 2)
-    rs = random.randrange(1, 2000000000)
-    f = auto(ne,md,rs,mss,msl,mfarr[mf], X_train, y_train, X_test, y_test, test_csv)
-    if f > 0.97:
-        break
+submission_csv['대출등급'] = y_sub
+# print(sub_csv['대출등급'])
+filename = "".join(["..//_data//dacon//daechul//dacon_loan_rf_", str(f1.round(4)), ".csv"])
+# rfc.save(filename + ".h5")
+submission_csv.to_csv(filename, index=False)
+save_code_to_file(filename)

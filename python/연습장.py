@@ -1,4 +1,4 @@
 import numpy as np
-print(np.array(range(6)))
-for i in range(6):
-    print(i)
+import random
+for i in range(10):
+    print(random.randrange(1,3))
