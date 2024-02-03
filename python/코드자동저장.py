@@ -6,10 +6,10 @@ def save_code_to_file(filename=None):
         filename = os.path.splitext(os.path.basename(__file__))[0] + ".txt"
     else:
         filename = filename + ".txt"
-    with open(__file__, "r") as file:
+    with open(__file__, "r", encoding="utf-8") as file:
         code = file.read()
     
-    with open(filename, "w") as file:
+    with open(filename, "w", encoding="utf-8") as file:
         file.write(code)
 
 

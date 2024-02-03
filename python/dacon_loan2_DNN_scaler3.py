@@ -5,7 +5,7 @@
 
 import numpy as np
 import pandas as pd
-from keras.models import Model
+from keras.models import Model, Sequential
 from keras.layers import Dense, Dropout, Input
 from keras.callbacks import EarlyStopping
 from sklearn.model_selection import train_test_split
@@ -20,10 +20,10 @@ def save_code_to_file(filename=None):
         filename = os.path.splitext(os.path.basename(__file__))[0] + ".txt"
     else:
         filename = filename + ".txt"
-    with open(__file__, "r") as file:
+    with open(__file__, "r",encoding="utf-8") as file:
         code = file.read()
     
-    with open(filename, "w") as file:
+    with open(filename, "w", encoding="utf-8") as file:
         file.write(code)
 path = "..\\_data\\dacon\\daechul\\"
 
@@ -159,19 +159,48 @@ print(np.min(X_train.iloc[:,0]))
 ######################### DATA End ###############################
 
 
+# ni = 인풋뉴런 수  26
+# no = 아웃풋 뉴런 수
+# ns = 트레인 데이터 샘플 수
+# A = 2 ~10
+# ns / (A * (ni + no))  
+
+# ts = 0.1 , ns = 86663
+# 86663 / ( A * ( 26 + 7))
 
 
 ######################## MODELING Start ##########################
-ip = Input(shape=(26, ))
-d1 = Dense(32, activation='swish')(ip)
-d2 = Dense(64, activation='swish')(d1)
-d3 = Dense(128, activation='swish')(d2)
-d4 = Dense(256, activation='swish')(d3)
-d5 = Dense(512, activation='swish')(d4)
-do = Dropout(0.3)(d5)
-d6 = Dense(128, activation='swish')(do)
-op = Dense(7, activation='softmax')(d6)
-model = Model(inputs=ip, outputs=op)
+# ip = Input(shape=(26, ))
+# d1 = Dense(node, activation='swish')(ip)
+# d2 = Dense(node, activation='swish')(d1)
+# d3 = Dense(node, activation='swish')(d2)
+# d4 = Dense(node, activation='swish')(d3)
+# d5 = Dense(node, activation='swish')(d4)
+# do = Dropout(0.3)(d5)
+# d6 = Dense(node, activation='swish')(do)
+# op = Dense(7, activation='softmax')(d6)
+# model = Model(inputs=ip, outputs=op)
+ni = 26
+no = 7
+ns = 86663
+def nd(ni,no, ns):
+    A = np.random.randint(2, 11)
+    return int(ns / (A * (ni + no)))
+
+model = Sequential()
+model.add(Dense(nd(ni,no,ns), input_shape=(26, ), activation='swish'))
+model.add(Dense(nd(ni,no,ns), activation='swish'))
+model.add(Dense(nd(ni,no,ns), activation='swish'))
+model.add(Dense(nd(ni,no,ns), activation='swish'))
+model.add(Dropout(0.3))
+model.add(Dense(nd(ni,no,ns), activation='swish'))
+model.add(Dense(nd(ni,no,ns), activation='swish'))
+model.add(Dense(nd(ni,no,ns), activation='swish'))
+model.add(Dropout(0.3))
+model.add(Dense(nd(ni,no,ns), activation='swish'))
+model.add(Dense(nd(ni,no,ns), activation='swish'))
+model.add(Dense(nd(ni,no,ns), activation='swish'))
+model.add(Dense(7, activation='softmax'))
 ######################## MODELING End ############################
 
 
@@ -181,7 +210,7 @@ model = Model(inputs=ip, outputs=op)
 ######################## COMPILE, FIT Start ######################
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 es = EarlyStopping(monitor='val_loss', mode='min', patience=100, verbose=1, restore_best_weights=True)
-model.fit(X_train, y_train, epochs=10000, batch_size=3000, validation_split=0.1, callbacks=[es])
+model.fit(X_train, y_train, epochs=10000, batch_size=32, validation_split=0.1, callbacks=[es])
 ######################## COMPILE, FIT End ########################
 
 ######################## EVALUTATE, PREDICT Start ################
