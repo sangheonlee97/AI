@@ -114,10 +114,6 @@ model = load_model("..//_data//_save//dacon_loan_Rob_119_0.9456_ts0.26_rs8718650
 
 es = EarlyStopping(monitor='val_loss', mode='min', patience=50, verbose=1, restore_best_weights=True)
 model.fit(X_train, y_train, epochs=100000, batch_size=1000, validation_split=0.26, callbacks=[es])
-model.fit(X_train, y_train, epochs=100000, batch_size=1000, validation_split=0.1, callbacks=[es])
-model.fit(X_train, y_train, epochs=100000, batch_size=1000, validation_split=0.2, callbacks=[es])
-model.fit(X_train, y_train, epochs=100000, batch_size=1000, validation_split=0.17, callbacks=[es])
-model.fit(X_train, y_train, epochs=100000, batch_size=1000, validation_split=0.05, callbacks=[es])
 
 ############### 4. evaluated, predict ##########
 results = model.evaluate(X_test, y_test)
