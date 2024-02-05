@@ -231,7 +231,7 @@ y_sub = pd.DataFrame(y_sub)
 ######################## SUBMISSION ##############################
 submission_csv['대출등급'] = y_sub
 # print(sub_csv['대출등급'])
-filename = "".join(["..//_data//_save//dacon_loan_2//dacon_loan_2_", str(f1.round(4))])
+filename = "".join(["..//_data//_save//dacon_loan_23//dacon_loan_23_", str(f1.round(4))])
 model.save(filename + ".h5")
 submission_csv.to_csv(path + "submisson_2.csv", index=False)
 save_code_to_file(filename)

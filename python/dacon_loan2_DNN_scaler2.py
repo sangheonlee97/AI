@@ -52,15 +52,45 @@ test_csv.loc[test_csv['근로기간']=='<1 year','근로기간']='< 1 year'
 train_csv.loc[train_csv['근로기간']=='10+years','근로기간']='10+ years'
 test_csv.loc[test_csv['근로기간']=='10+years','근로기간']='10+ years'
 
+train_csv.loc[train_csv['근로기간']=='1 years', '근로기간'] = 1
+test_csv.loc[test_csv['근로기간']=='1 years', '근로기간'] = 1
+train_csv.loc[train_csv['근로기간']=='< 1 year', '근로기간'] = 1
+test_csv.loc[test_csv['근로기간']=='< 1 year', '근로기간'] = 1
+train_csv.loc[train_csv['근로기간']=='2 years', '근로기간'] = 1
+test_csv.loc[test_csv['근로기간']=='2 years', '근로기간'] = 1
+train_csv.loc[train_csv['근로기간']=='3 years', '근로기간'] = 1
+test_csv.loc[test_csv['근로기간']=='3 years', '근로기간'] = 1
+train_csv.loc[train_csv['근로기간']=='4 years', '근로기간'] = 1
+test_csv.loc[test_csv['근로기간']=='4 years', '근로기간'] = 1
+train_csv.loc[train_csv['근로기간']=='5 years', '근로기간'] = 2
+test_csv.loc[test_csv['근로기간']=='5 years', '근로기간'] = 2
+train_csv.loc[train_csv['근로기간']=='6 years', '근로기간'] = 2
+test_csv.loc[test_csv['근로기간']=='6 years', '근로기간'] = 2
+train_csv.loc[train_csv['근로기간']=='7 years', '근로기간'] = 3
+test_csv.loc[test_csv['근로기간']=='7 years', '근로기간'] = 3
+train_csv.loc[train_csv['근로기간']=='8 years', '근로기간'] = 3
+test_csv.loc[test_csv['근로기간']=='8 years', '근로기간'] = 3
+train_csv.loc[train_csv['근로기간']=='9 years', '근로기간'] = 3
+test_csv.loc[test_csv['근로기간']=='9 years', '근로기간'] = 3
+train_csv.loc[train_csv['근로기간']=='10+ years', '근로기간'] = 5
+test_csv.loc[test_csv['근로기간']=='10+ years', '근로기간'] = 5
+train_csv.loc[train_csv['근로기간']=='Unknown', '근로기간'] = 0
+test_csv.loc[test_csv['근로기간']=='Unknown', '근로기간'] = 0
+
+
+
 X = train_csv.drop(['대출등급'], axis=1)
 y = train_csv['대출등급']
 
+X.loc[:,'대출금액'] = np.log(X.loc[:,'대출금액'])
+test_csv.loc[:,'대출금액'] = np.log(test_csv.loc[:,'대출금액'])
 
-
-le_work_period = LabelEncoder()
-le_work_period.fit(X['근로기간'])
-X['근로기간'] = le_work_period.transform(X['근로기간'])
-test_csv['근로기간'] = le_work_period.transform(test_csv['근로기간'])
+# X.loc[:,'연간소득'] = np.log(X.loc[:,'연간소득'])
+# test_csv.loc[:,'연간소득'] = np.log(test_csv.loc[:,'연간소득'])
+# le_work_period = LabelEncoder()
+# le_work_period.fit(X['근로기간'])
+# X['근로기간'] = le_work_period.transform(X['근로기간'])
+# test_csv['근로기간'] = le_work_period.transform(test_csv['근로기간'])
 
 # print(train_csv['주택소유상태'].value_counts()) # train 데이터에만 "any" 한개 있음,,  27번줄에서 삭제함
 ohe_own = OneHotEncoder(sparse_output=False)
@@ -115,7 +145,7 @@ test_csv[1] = le_loan_period.transform(test_csv[1])
 # X = X.drop(['연체계좌수'],axis=1)
 # test_csv = test_csv.drop(['총연체금액'],axis=1)
 # test_csv = test_csv.drop(['연체계좌수'],axis=1)
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=4, stratify=y)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=8718650, stratify=y)
 # print(np.unique(X_train['연체계좌수'], return_counts=True))
 
 print(X_train.shape)
@@ -132,7 +162,7 @@ print(np.min(X_train.iloc[:,0]))
 RS = [
     0,3,4,5,7,8
 ]
-Scaler = RobustScaler()
+Scaler = StandardScaler()
 X_train[RS] = Scaler.fit_transform(X_train[RS])
 X_test[RS] = Scaler.transform(X_test[RS])
 test_csv[RS] = Scaler.transform(test_csv[RS])
@@ -162,17 +192,37 @@ print(np.min(X_train.iloc[:,0]))
 
 
 ######################## MODELING Start ##########################
-ip = Input(shape=(26, ))
-d1 = Dense(32, activation='swish')(ip)
-d2 = Dense(64, activation='swish')(d1)
-d3 = Dense(128, activation='swish')(d2)
-d4 = Dense(256, activation='swish')(d3)
-d5 = Dense(512, activation='swish')(d4)
-do = Dropout(0.3)(d5)
-d6 = Dense(128, activation='swish')(do)
-op = Dense(7, activation='softmax')(d6)
-model = Model(inputs=ip, outputs=op)
-######################## MODELING End ############################
+# ip = Input(shape=(26, ))
+# d1 = Dense(32, activation='swish')(ip)
+# d2 = Dense(64, activation='swish')(d1)
+# d3 = Dense(128, activation='swish')(d2)
+# d4 = Dense(256, activation='swish')(d3)
+# do = Dropout(0.2)(d4)
+# d5 = Dense(256, activation='swish')(do)
+# d6 = Dense(128, activation='swish')(d5)
+# op = Dense(7, activation='softmax')(d6)
+# model = Model(inputs=ip, outputs=op)
+from keras.models import Sequential
+model = Sequential()
+model.add(Dense(19, activation='swish', input_shape=(26, )))
+model.add(Dense(97, activation='swish'))
+model.add(Dense(11, activation='swish'))
+model.add(Dense(20, activation='swish'))
+model.add(Dense(12, activation='swish'))
+model.add(Dense(256, activation='swish'))
+model.add(Dense(97, activation='swish'))
+model.add(Dense(11, activation='swish'))
+model.add(Dense(20, activation='swish'))
+model.add(Dense(12, activation='swish'))
+model.add(Dense(256, activation='swish'))
+model.add(Dense(97, activation='swish'))
+model.add(Dense(11, activation='swish'))
+model.add(Dense(20, activation='swish'))
+model.add(Dense(12, activation='swish'))
+model.add(Dense(256, activation='swish'))
+model.add(Dense(32, activation='swish'))
+model.add(Dense(7, activation='softmax'))
+######################## MODELING End ###########################
 
 
 
@@ -181,7 +231,7 @@ model = Model(inputs=ip, outputs=op)
 ######################## COMPILE, FIT Start ######################
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 es = EarlyStopping(monitor='val_loss', mode='min', patience=100, verbose=1, restore_best_weights=True)
-model.fit(X_train, y_train, epochs=10000, batch_size=3000, validation_split=0.1, callbacks=[es])
+model.fit(X_train, y_train, epochs=10000, batch_size=1000, validation_split=0.1, callbacks=[es])
 ######################## COMPILE, FIT End ########################
 
 ######################## EVALUTATE, PREDICT Start ################

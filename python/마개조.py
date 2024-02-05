@@ -87,7 +87,7 @@ test_csv['대출기간'] = le_loan_period.transform(test_csv['대출기간'])
 # X = X.drop(['연체계좌수'],axis=1)
 # test_csv = test_csv.drop(['총연체금액'],axis=1)
 # test_csv = test_csv.drop(['연체계좌수'],axis=1)
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.26, random_state=8718650, stratify=y)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.07, random_state=8718650, stratify=y)
 
 Scaler = RobustScaler(quantile_range=(26 - 1, 74 + 1))
 X_train = Scaler.fit_transform(X_train)
@@ -110,10 +110,10 @@ test_csv = Scaler.transform(test_csv)
 # es = EarlyStopping(monitor='val_loss', mode='min', patience=300, verbose=1, restore_best_weights=True)
 # model.fit(X_train, y_train, epochs=100000, batch_size=500, validation_split=0.1, callbacks=[es])
 
-model = load_model("..//_data//_save//dacon_loan_Rob_119_0.9456_ts0.26_rs8718650_bs5284_vs0.22.h5")
+model = load_model("..//_data//_save//dacon_loan_Rob324_0.9367.h5")
 
 def daconsibal(vs, bs, X_train, X_test, y_train, y_test):
-    es = EarlyStopping(monitor='val_loss', mode='min', patience=50, verbose=1, restore_best_weights=True)
+    es = EarlyStopping(monitor='val_loss', mode='min', patience=70, verbose=1, restore_best_weights=True)
     model.fit(X_train, y_train, epochs=100000, batch_size=bs, validation_split=vs, callbacks=[es])
 
     ############### 4. evaluated, predict ##########
