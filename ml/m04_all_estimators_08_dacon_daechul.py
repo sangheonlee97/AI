@@ -132,7 +132,7 @@ allAlgorithms = all_estimators(type_filter='classifier')
 best = [0, 'no']
 for name, algorithm in allAlgorithms:
     try:
-        model = algorithm()
+        model = algorithm(verbose=1)
         
         model.fit(X_train,y_train)
 
