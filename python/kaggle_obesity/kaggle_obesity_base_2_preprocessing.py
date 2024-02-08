@@ -69,23 +69,19 @@ test_csv = scaler.transform(test_csv)
 
 
 # 2. model
-i = 1
-while 1:
-    rfc = RandomForestClassifier(random_state=i)
+rfc = RandomForestClassifier()
 
-    # 3. compile, fit
-    rfc.fit(X_train, y_train)
+# 3. compile, fit
+rfc.fit(X_train, y_train)
 
-    # 4. eval
-    sc = rfc.score(X_test, y_test)
-    print("score : ", sc)
-    sub = rfc.predict(test_csv)
-    sub = le.inverse_transform(sub)
+# 4. eval
+sc = rfc.score(X_test, y_test)
+print("score : ", sc)
+sub = rfc.predict(test_csv)
+sub = le.inverse_transform(sub)
 
-    submission_csv['NObeyesdad'] = sub
-    if sc > 0.91:
-        submission_csv.to_csv(path + "submission_2_auto{}.csv".format(i), index=False)
-    i += 1
+submission_csv['NObeyesdad'] = sub
+submission_csv.to_csv(path + "submission_2.csv", index=False)
 
 # 0.8976396917148363
 # 0.8988439306358381
