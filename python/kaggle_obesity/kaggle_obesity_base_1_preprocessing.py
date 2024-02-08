@@ -12,7 +12,8 @@ def oheconcat(data, col):
     data = data.drop(data.columns[col], axis=1)
     data = np.concatenate([data, temp], axis=1)
     return data
-
+numpy_random_seed = 42
+np.random.seed(numpy_random_seed)
 
 train_csv = pd.read_csv(path + "train.csv", index_col=0)
 test_csv = pd.read_csv(path + "test.csv", index_col=0)
@@ -84,3 +85,5 @@ submission_csv.to_csv(path + "submission_1.csv", index=False)
 # print("scores : ", scores)
 # print("mean score : ", np.mean(scores))
 # print("max score : ", np.max(scores))
+
+# smoke 컬럼은 빼니까 성능이 더 안좋아진다..

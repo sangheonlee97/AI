@@ -12,6 +12,8 @@ def oheconcat(data, col):
     data = data.drop(data.columns[col], axis=1)
     data = np.concatenate([data, temp], axis=1)
     return data
+numpy_random_seed = 42
+np.random.seed(numpy_random_seed)
 
 train_csv = pd.read_csv(path + "train.csv", index_col=0)
 test_csv = pd.read_csv(path + "test.csv", index_col=0)
