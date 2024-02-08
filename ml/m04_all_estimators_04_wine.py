@@ -64,3 +64,6 @@ for name, algorithm in allAlgorithms:
     except:
         print("qudtlsrkxdms dkfrhflwma : ", name)
 print("best model : ", best[1], "\nbest acc : ", best[0])
+
+# best model :  BaggingClassifier
+# best acc :  1.0

@@ -96,15 +96,7 @@ while True:
         if auto(random.randint(1,2000000000)) < 1:
                 break
 
-# import matplotlib.pyplot as plt
-# plt.figure(figsize=(50, 30))
-# plt.plot(hist.history['accuracy'], color='red', label='accuracy', marker='.')
-# plt.plot(hist.history['val_loss'], color='blue', label='val_loss', marker='.')
-# plt.xlabel('에폭')
-# plt.title('wine 로스', fontsize=30)
-# plt.ylabel('로스')
-# plt.legend(loc = 'upper right')
-# plt.grid()
-# plt.ylim(0, 10)
-# plt.show()
+# best model :  AdaBoostClassifier
+# best acc :  0.9791666666666666
+
 # # https://dacon.io/competitions/open/235610/overview/description
