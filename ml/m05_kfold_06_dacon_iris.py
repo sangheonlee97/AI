@@ -34,27 +34,12 @@ from sklearn.metrics import accuracy_score
 from sklearn.utils import all_estimators
 allAlgorithms = all_estimators(type_filter='classifier')
 best = [0, 'no', 9999]
-for i, v in enumerate(allAlgorithms):
-    name, algorithm = v
-    try:
-        model = algorithm()
-        
-        model.fit(X_train,y_train)
-
-        # results = model.score(X_test, y_test)
-
-        # print("model : ", model, ", ",'score : ', results)
-        y_pred = model.predict(X_test)
-
-        acc = accuracy_score(y_test, y_pred)
-        print("idx : ", i, ", model : ", name, ", ","acc : ", acc)
-        if best[0] < acc:
-            best[0] = acc
-            best[1] = name
-            best[2] = i
-    except:
-        print("qudtlsrkxdms dkfrhflwma : ", name)
-print("best model : ", best[1], ", idx [", best[2],"]", "\nbest acc : ", best[0])
+model = allAlgorithms[0][1]()
+from sklearn.model_selection import StratifiedKFold, cross_val_score
+StratifiedKFold = StratifiedKFold(5, shuffle=True, random_state=42)
+score = cross_val_score(model, X, y, cv=StratifiedKFold)
+print("model : ", allAlgorithms[0][0])
+print("acc : ", score.round(4))
 
 # best model :  AdaBoostClassifier , idx [ 0 ]
 # best acc :  0.9791666666666666

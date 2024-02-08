@@ -43,8 +43,9 @@ X_test = scaler.transform(X_test)
 #2. model
 from sklearn.utils import all_estimators
 allAlgorithms = all_estimators(type_filter='classifier')
-best = [0, 'no']
-for name, algorithm in allAlgorithms:
+best = [0, 'no', 9999]
+for i, v in enumerate(allAlgorithms):
+    name, algorithm = v
     try:
         model = algorithm()
         
@@ -56,16 +57,18 @@ for name, algorithm in allAlgorithms:
         y_pred = model.predict(X_test)
 
         acc = accuracy_score(y_test, y_pred)
-        print("model : ", name, ", ","acc : ", acc)
+        print("idx : ", i, "model : ", name, ", ","acc : ", acc)
         if best[0] < acc:
             best[0] = acc
             best[1] = name
+            best[2] = i
     except:
         print("qudtlsrkxdms dkfrhflwma : ", name)
-print("best model : ", best[1], "\nbest acc : ", best[0])
+print("best model : ", best[1], ", idx [", best[2],"]", "\nbest acc : ", best[0])
 
 
-
+# best model :  SGDClassifier
+# best acc :  0.9883720930232558
 
 
 
