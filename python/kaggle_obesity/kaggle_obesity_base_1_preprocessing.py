@@ -1,8 +1,8 @@
 import pandas as pd
 import numpy as np
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, StratifiedKFold, cross_val_score
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.preprocessing import OneHotEncoder, LabelEncoder
+from sklearn.preprocessing import OneHotEncoder, LabelEncoder, StandardScaler
 path = '..//_data//kaggle//obesity//'
 def oheconcat(data, col):
     data = pd.DataFrame(data)
@@ -13,9 +13,13 @@ def oheconcat(data, col):
     data = np.concatenate([data, temp], axis=1)
     return data
 
+
 train_csv = pd.read_csv(path + "train.csv", index_col=0)
 test_csv = pd.read_csv(path + "test.csv", index_col=0)
 submission_csv = pd.read_csv(path + "sample_submission.csv")
+
+train_csv = train_csv.drop(['SMOKE'], axis=1)
+test_csv = test_csv.drop(['SMOKE'], axis=1)
 
 # 1. data
 X = train_csv.drop(['NObeyesdad'], axis=1)
@@ -28,8 +32,10 @@ y = train_csv['NObeyesdad']
 #        'Obesity_Type_II', 'Obesity_Type_III', 'Overweight_Level_I',
 #        'Overweight_Level_II']
 
-ohelist = [0, 4, 5, 9, 11, 15]
-lelist = [8, 14]
+ohelist = [0, 4, 5, 10, 14]
+lelist = [8, 13]
+# ohelist = [0, 4, 5, 9, 11, 15]
+# lelist = [8, 14]
 # for col in lelist:
 #     X, test_csv = le(X, test_csv, col)
 mapping_dict = {'no': 0, 'Sometimes': 1, 'Frequently': 2, 'Always' :3}
@@ -44,8 +50,6 @@ for col in ohelist:
     X = oheconcat(X, col - idxcheck)
     test_csv = oheconcat(test_csv, col - idxcheck)
     idxcheck += 1
-
-print(X)
 
 le = LabelEncoder()
 y = le.fit_transform(y)
@@ -67,11 +71,12 @@ sub = rfc.predict(test_csv)
 sub = le.inverse_transform(sub)
 
 submission_csv['NObeyesdad'] = sub
-submission_csv.to_csv(path + "submission.csv", index=False)
+submission_csv.to_csv(path + "submission_1.csv", index=False)
 
-# score :  0.899325626204239
-# score :  0.8995664739884393
-# score :  0.8998073217726397
+# score :  0.8966763005780347
+# score :  0.896917148362235
+# score :  0.8930635838150289
+
 
 # n_splits = 5
 # kfold = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=42)
