@@ -130,7 +130,7 @@ model = Model(inputs=ip, outputs=op)
 
 ######################## COMPILE, FIT Start ######################
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
-es = EarlyStopping(monitor='val_loss', mode='min', patience=100, verbose=1, restore_best_weights=True)
+es = EarlyStopping(monitor='val_loss', mode='min', patience=10, verbose=1, restore_best_weights=True)
 model.fit(X_train, y_train, epochs=10000, batch_size=1500, validation_split=0.2, callbacks=[es])
 ######################## COMPILE, FIT End ########################
 
@@ -155,4 +155,4 @@ submission_csv['대출등급'] = y_sub
 filename = "".join(["..//_data//_save//dacon_loan_2//dacon_loan_2_", str(f1.round(4))])
 model.save(filename + ".h5")
 submission_csv.to_csv(path + "submisson_2.csv", index=False)
-save_code_to_file(filename)
+# save_code_to_file(filename)

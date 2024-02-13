@@ -158,7 +158,7 @@ test_csv[MS] = Scaler.transform(test_csv[MS])
 
 
 ######################## MODELING Start ##########################
-rfc = RandomForestClassifier(n_estimators=200, max_depth=50, random_state=861492, criterion='entropy')
+rfc = RandomForestClassifier(random_state=42)
 rfc.fit(X_train, y_train)
 ######################## COMPILE, FIT End ########################
 
