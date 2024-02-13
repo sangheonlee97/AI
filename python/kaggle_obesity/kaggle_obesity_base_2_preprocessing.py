@@ -7,7 +7,6 @@ from sklearn.preprocessing import OneHotEncoder, LabelEncoder
 path = '..//_data//kaggle//obesity//'
 numpy_random_seed = 42
 np.random.seed(numpy_random_seed)
-
 def oheconcat(data, col):
     data = pd.DataFrame(data)
     temp = data.iloc[:,col]
