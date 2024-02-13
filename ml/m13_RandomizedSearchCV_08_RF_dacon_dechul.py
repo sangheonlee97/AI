@@ -79,3 +79,9 @@ best_model_acc_score :\t{best_acc_score}
 best score :            0.7945609138703187
 best_model_acc_score :  0.7995742250376447
 '''
+
+
+# 최적의 파라미터 :       RandomForestClassifier(min_samples_split=3, n_jobs=4)
+# 최적의 매개변수 :       {'n_jobs': 4, 'min_samples_split': 3}
+# best score :            0.7970273252417732
+# best_model_acc_score :  0.7999896152448206
