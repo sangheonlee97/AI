@@ -84,7 +84,7 @@ while 1:
 
     submission_csv['NObeyesdad'] = sub
     if sc > 0.91:
-        submission_csv.to_csv(path + "submission_2_auto{}.csv".format(i), index=False)
+        submission_csv.to_csv(path + "submission_2_auto_{}_{}.csv".format(round(sc,4), i), index=False)
     i += 1
 
 # 0.8976396917148363
