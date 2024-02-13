@@ -1,12 +1,12 @@
-# 모델 : RanadomForestClassifier
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.datasets import load_iris
-from sklearn.model_selection import train_test_split, cross_val_score, cross_val_predict, StratifiedKFold, GridSearchCV
-from sklearn.preprocessing import MinMaxScaler
+import numpy as np
+from sklearn.datasets import load_wine
+from sklearn.model_selection import train_test_split, KFold, cross_val_score, StratifiedKFold, cross_val_predict
+from sklearn.ensemble import AdaBoostClassifier
+from sklearn.metrics import accuracy_score
+import warnings
+warnings.filterwarnings('ignore')
 
-# 1. 데이터
-x,y = load_iris(return_X_y=True)
-
+x,y = load_wine(return_X_y=True)
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split, cross_val_score, cross_val_predict, StratifiedKFold, GridSearchCV
 
@@ -14,6 +14,7 @@ x_train, x_test, y_train , y_test = train_test_split(
     x, y, shuffle= True, random_state=123, train_size=0.8,
     stratify= y
 )
+from sklearn.preprocessing import MinMaxScaler, StandardScaler
 scaler = MinMaxScaler()
 x_train = scaler.fit_transform(x_train)
 x_test = scaler.transform(x_test)
@@ -46,8 +47,8 @@ best_model_acc_score :\t{best_acc_score}
 ''')
 
 '''
-최적의 파라미터 :       RandomForestClassifier(max_depth=6, min_samples_leaf=3)
-최적의 매개변수 :       {'max_depth': 6, 'min_samples_leaf': 3, 'n_estimators': 100}
-best score :            0.9583333333333334
-best_model_acc_score :  0.9333333333333333
+최적의 파라미터 :       RandomForestClassifier(max_depth=10, min_samples_leaf=3, n_estimators=200)
+최적의 매개변수 :       {'max_depth': 10, 'min_samples_leaf': 3, 'n_estimators': 200}
+best score :            0.993103448275862
+best_model_acc_score :  0.9722222222222222
 '''

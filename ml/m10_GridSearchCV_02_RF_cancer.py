@@ -1,12 +1,14 @@
-# 모델 : RanadomForestClassifier
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.datasets import load_iris
-from sklearn.model_selection import train_test_split, cross_val_score, cross_val_predict, StratifiedKFold, GridSearchCV
-from sklearn.preprocessing import MinMaxScaler
+import numpy as np
+from sklearn.datasets import load_breast_cancer
+from sklearn.model_selection import train_test_split, KFold ,cross_val_score, StratifiedKFold, cross_val_predict
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+from sklearn.metrics import accuracy_score
+from sklearn.preprocessing import MinMaxScaler, StandardScaler
+import warnings
+warnings.filterwarnings('ignore')
 
 # 1. 데이터
-x,y = load_iris(return_X_y=True)
-
+x,y = load_breast_cancer(return_X_y=True)
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split, cross_val_score, cross_val_predict, StratifiedKFold, GridSearchCV
 
@@ -46,8 +48,8 @@ best_model_acc_score :\t{best_acc_score}
 ''')
 
 '''
-최적의 파라미터 :       RandomForestClassifier(max_depth=6, min_samples_leaf=3)
-최적의 매개변수 :       {'max_depth': 6, 'min_samples_leaf': 3, 'n_estimators': 100}
-best score :            0.9583333333333334
-best_model_acc_score :  0.9333333333333333
+최적의 파라미터 :       RandomForestClassifier(max_depth=12, min_samples_leaf=3, n_estimators=200)
+최적의 매개변수 :       {'max_depth': 12, 'min_samples_leaf': 3, 'n_estimators': 200}
+best score :            0.9670329670329672
+best_model_acc_score :  0.9649122807017544
 '''
