@@ -23,7 +23,7 @@ x = train_csv.drop(['count'], axis=1) #axis 0이 행 1이 열
 y = train_csv['count'] 
 
 from sklearn.ensemble import RandomForestRegressor
-from sklearn.model_selection import train_test_split, cross_val_score, cross_val_predict, StratifiedKFold, GridSearchCV
+from sklearn.model_selection import train_test_split, cross_val_score, cross_val_predict, StratifiedKFold, RandomizedSearchCV
 
 x_train, x_test, y_train , y_test = train_test_split(
     x, y, shuffle= True, random_state=123, train_size=0.8,)
@@ -42,7 +42,7 @@ parameters = [
     {"min_samples_split": [2, 3, 5, 10]},
 ]
 rfc = RandomForestRegressor()
-model = GridSearchCV(rfc, param_grid=parameters, cv=kf , n_jobs=-1, refit=True, verbose=1)
+model = RandomizedSearchCV(rfc,  parameters, cv=kf , n_jobs=-1, refit=True, verbose=1)
 model.fit(x_train, y_train)
 
 from sklearn.metrics import r2_score
