@@ -129,3 +129,4 @@ text데이터를 Tokenizer()를 통해 학습시키려 할 때 원핫 인코딩�
 
 //
 
+HalvingGridSearch의 n_resources는 CV * 2 * label개수
