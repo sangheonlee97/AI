@@ -45,10 +45,24 @@ print(np.cumsum(evr))
 '''
 [그냥] model.score :  0.4353792704303845
 (353, 10)
-[차원 - 1] model.score :  0.011235955056179775
-(353, 9)
-[차원 - 2] model.score :  0.011235955056179775
-(353, 8)
-[차원 - 3] model.score :  0.0
+[n_components=1] model.score :  -0.12566474926286708
+(353, 1)
+[n_components=2] model.score :  0.15265343406885368
+(353, 2)
+[n_components=3] model.score :  0.17843346177656272
+(353, 3)
+[n_components=4] model.score :  0.49816509386736996
+(353, 4)
+[n_components=5] model.score :  0.47963422355984486
+(353, 5)
+[n_components=6] model.score :  0.43735640574446477
+(353, 6)
+[n_components=7] model.score :  0.4836347562398342
 (353, 7)
+[n_components=8] model.score :  0.4533319108978413
+(353, 8)
+[n_components=9] model.score :  0.4329284530767996
+(353, 9)
+[n_components=10] model.score :  0.4607168843696401
+(353, 10)
 '''
