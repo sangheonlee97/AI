@@ -21,13 +21,14 @@ submission_csv = pd.read_csv(path + "sample_submission.csv")
 
 train_csv = train_csv.drop(['SMOKE'], axis=1)
 test_csv = test_csv.drop(['SMOKE'], axis=1)
+train_csv = train_csv.drop(['TUE'], axis=1)
+test_csv = test_csv.drop(['TUE'], axis=1)
 
 roundlist = [
             'FCVC',
             'NCP',
             'CH2O',
             'FAF',
-            'TUE'
 ]
 train_csv[roundlist] = train_csv[roundlist].round()
 test_csv[roundlist] = test_csv[roundlist].round()
@@ -43,8 +44,8 @@ y = train_csv['NObeyesdad']
 #        'Obesity_Type_II', 'Obesity_Type_III', 'Overweight_Level_I',
 #        'Overweight_Level_II']
 
-ohelist = [0, 4, 5, 10, 14]
-lelist = [8, 13]
+ohelist = [0, 4, 5, 10, 13]
+lelist = [8, 12]
 # ohelist = [0, 4, 5, 9, 11, 15]
 # lelist = [8, 14]
 # for col in lelist:

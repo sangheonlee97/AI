@@ -1,3 +1,8 @@
+시도해볼 것 :   PCA, 스케일링, 그리드서치, 랜더마이즈서치, 하빙~서치, CV, SMOTE, Dropout, 
+
+
+///
+
 cmd:
 nvidia-smi : nvidia 버전확인
 

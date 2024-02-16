@@ -3,6 +3,7 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import OneHotEncoder, LabelEncoder
+from imblearn.over_sampling import SMOTE
 path = '..//_data//kaggle//obesity//'
 def oheconcat(data, col):
     data = pd.DataFrame(data)
@@ -19,6 +20,8 @@ train_csv = pd.read_csv(path + "train.csv", index_col=0)
 test_csv = pd.read_csv(path + "test.csv", index_col=0)
 submission_csv = pd.read_csv(path + "sample_submission.csv")
 
+print(np.unique(train_csv[train_csv['NObeyesdad'] == 'Obesity_Type_II']['Gender'], return_counts=True))
+
 # 1. data
 X = train_csv.drop(['NObeyesdad'], axis=1)
 y = train_csv['NObeyesdad']
@@ -31,13 +34,13 @@ y = train_csv['NObeyesdad']
 #        'Overweight_Level_II']
 
 ohelist = [0, 4, 5, 9, 11, 15]
-lelist = [8, 14]
+maplist = [8, 14]
 # for col in lelist:
 #     X, test_csv = le(X, test_csv, col)
 mapping_dict = {'no': 0, 'Sometimes': 1, 'Frequently': 2, 'Always' :3}
 
 # 'Category' 열을 매핑하여 새로운 'Mapped' 열 생성
-for col in lelist:
+for col in maplist:
     X.iloc[:, col] = X.iloc[:, col].map(mapping_dict)
     test_csv.iloc[:, col] = test_csv.iloc[:, col].map(mapping_dict)
 
