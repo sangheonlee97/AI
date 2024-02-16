@@ -28,6 +28,3 @@ imputer3 = IterativeImputer()
 data4 = imputer3.fit_transform(data)
 print(data4.round(4))
 
-from impyute.imputation.cs import mice
-aaa = mice(data.values)
-print(aaa)
