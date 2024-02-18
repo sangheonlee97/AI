@@ -7,6 +7,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import r2_score, mean_squared_error,accuracy_score
 from keras.callbacks import EarlyStopping, ModelCheckpoint
 from sklearn.preprocessing import MinMaxScaler, MaxAbsScaler, StandardScaler, RobustScaler
+
 # 1.데이터
 
 path = "..\\_data\\dacon\\ddarung\\"
@@ -56,8 +57,35 @@ test_csv = test_csv.fillna(test_csv.mean())
 print(test_csv.info())      # 717 non-null
 
 X = train_csv.drop(['count'], axis=1)
-
 y = train_csv['count']
+
+def outliers(data_out):
+    quartile_1, q2, quartile_3 = np.percentile(data_out, [15, 50, 85]) # 하위 15퍼, 상위 85퍼 이후를 이상치로 설정
+    print("1사분위 : ", quartile_1)
+    print("q2 : ", q2)
+    print("3사분위 : ", quartile_3)
+    iqr = quartile_3 - quartile_1
+    print("iqr : ", iqr)
+    lower_bound = quartile_1 - (iqr * 1.5)
+    upper_bound = quartile_1 + (iqr * 1.5)
+    return np.where((data_out>upper_bound) | (data_out<lower_bound))
+
+def filldata(data, idxlist):
+    for idx in idxlist:
+        data.iloc[idx] = np.mean(data)
+    return data
+
+cols = X.columns
+for col in cols:
+    X[col] = filldata(X[col], outliers(X[col]))
+# 기존 결과 
+# RMSE :  43.750569219124145
+# 로스 :  [1914.1121826171875, 0.0]
+
+
+# 이상치 처리 결과 ( ~15, 85~ ) 평균값으로 치환
+# RMSE :  44.878606533313395
+# 로스 :  [2014.0892333984375, 0.0]
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, shuffle=True, random_state=3)      #58356
 ################    MinMaxScaler    ##############################
@@ -126,11 +154,11 @@ filename = '{epoch:05d}-{val_loss:.4f}-{loss:.4f}.hdf5'            # 04d : 4자�
 filepath = "".join([path, 'k26_dacon_ddarung_',date,'_', filename])
 mcp = ModelCheckpoint(monitor='val_loss', mode='min', verbose=1, save_best_only=True, filepath=filepath)    
 model.compile(loss='mse', optimizer='adam', metrics='accuracy')
-es = EarlyStopping(monitor='val_loss', mode='min', patience=300, verbose=20, restore_best_weights=True)
+es = EarlyStopping(monitor='val_loss', mode='min', patience=100, verbose=20, restore_best_weights=True)
 
 start_time = time.time()
 
-hist = model.fit(X_train, y_train, epochs=3000, batch_size=32, validation_split=0.15, verbose=2, callbacks=[es,mcp])
+hist = model.fit(X_train, y_train, epochs=3000, batch_size=32, validation_split=0.15, verbose=2, callbacks=[es])
 end_time = time.time()
 
 # 4.평가, 예측
