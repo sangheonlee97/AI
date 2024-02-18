@@ -37,6 +37,11 @@ for col in cols:
 # 기존
 # RMSLE :  4.792837657395268
 # 걸린 시간 :  4.38 초
+
+# 이상치 처리
+# RMSLE :  1.3232636227760337
+# 걸린 시간 :  71.8 초
+
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, shuffle=True, random_state=713)
 
 #############    MinMaxScaler    ##############################
