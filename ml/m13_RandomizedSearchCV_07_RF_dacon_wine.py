@@ -9,7 +9,7 @@ from sklearn.utils import all_estimators
 import warnings
 warnings.filterwarnings('ignore')
 
-path = "C:/_data/dacon/wine/"
+path = "../_data/dacon/wine/"
 
 #1.데이터 가져오기
 train_csv = pd.read_csv(path + "train.csv", index_col=0)
