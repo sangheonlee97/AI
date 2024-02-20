@@ -8,7 +8,8 @@ import pandas as pd
 import pickle
 import joblib
 
-path = "../_data/_save/_pickle_test/"
+# path = "../_data/_save/_pickle_test/"
+path = "../_data/_save/_joblib_test/"
 
 X, y = load_digits(return_X_y=True)
 print(X.shape, y.shape) # 569, 30
@@ -20,7 +21,8 @@ X_train = scaler.fit_transform(X_train)
 X_test = scaler.transform(X_test)
 
 
-model = pickle.load(open(path + 'm39_pickle1_save.dat', 'rb'))
+# model = pickle.load(open(path + 'm39_pickle1_save.dat', 'rb'))
+model = joblib.load(path + 'm40_joblib1_save.dat')
 print("model.score : ", model.score(X_test, y_test))
 y_pred = model.predict(X_test)
 f1 = f1_score(y_test, y_pred, average='macro')
