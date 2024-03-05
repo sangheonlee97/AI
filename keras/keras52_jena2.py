@@ -14,7 +14,7 @@ import time
 
 print("load start")
 path = "..//_data//kaggle//jena//"
-X = np.load(path + "jena_X.npy")        # timestep = 6 * 24 * 5
+X = np.load(path + "jena_X.npy")        # timestep = 6 * 24 * 10
 y = np.load(path + "jena_y.npy")
 print("load end")
 print(X.shape)  # (420548, 3, 14)
@@ -52,7 +52,7 @@ print("split end")
 
 ############ 2. model ###################
 model = Sequential()
-model.add(LSTM(30, input_shape=( 24 * 5, 14)))
+model.add(LSTM(30, input_shape=( 24 * 10, 14)))
 model.add(Dense(64, activation='relu'))
 model.add(Dense(128, activation='relu'))
 model.add(Dense(256, activation='relu'))

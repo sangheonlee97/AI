@@ -50,7 +50,7 @@ def split_Xy(data, size, col):
         X.append(X_s)
         y.append(y_s)
     return np.array(X), np.array(y)
-timesteps = 6 * 24 * 5
+timesteps = 6 * 24 * 10
 target_col = 1
 X, y = split_Xy(dataset, timesteps, target_col)
 path2 = "..//_data//kaggle//jena//"

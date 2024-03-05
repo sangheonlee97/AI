@@ -1,9 +1,9 @@
 import pandas as pd
 import numpy as np
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, RandomizedSearchCV
 from sklearn.ensemble import RandomForestClassifier
+from xgboost import XGBClassifier
 from sklearn.preprocessing import OneHotEncoder, LabelEncoder
-from imblearn.over_sampling import SMOTE
 path = '..//_data//kaggle//obesity//'
 def oheconcat(data, col):
     data = pd.DataFrame(data)
@@ -19,8 +19,29 @@ np.random.seed(numpy_random_seed)
 train_csv = pd.read_csv(path + "train.csv", index_col=0)
 test_csv = pd.read_csv(path + "test.csv", index_col=0)
 submission_csv = pd.read_csv(path + "sample_submission.csv")
+roundlist = [
+            'FCVC',
+            'NCP',
+            'CH2O',
+            'FAF',
+            'TUE'
+]
+# train_csv[roundlist] = train_csv[roundlist].round()
+# test_csv[roundlist] = test_csv[roundlist].round()
 
-print(np.unique(train_csv[train_csv['NObeyesdad'] == 'Obesity_Type_II']['Gender'], return_counts=True))
+train_csv.loc[train_csv['MTRANS'] == 'Motorbike', 'MTRANS'] = 'Automobile'
+test_csv.loc[test_csv['MTRANS'] == 'Motorbike', 'MTRANS'] = 'Automobile'
+train_csv.loc[train_csv['MTRANS'] == 'Bike', 'MTRANS'] = 'Walking'
+test_csv.loc[test_csv['MTRANS'] == 'Bike', 'MTRANS'] = 'Walking'
+
+# 'weight'와 'height' 컬럼을 이용하여 BMI('bmi') 컬럼 생성
+train_csv['Bmi'] = train_csv['Weight'] / (train_csv['Height'] / 100) ** 2
+test_csv['Bmi'] = test_csv['Weight'] / (test_csv['Height'] / 100) ** 2
+
+# for i in range(len(train_csv)):
+#     train_csv.iloc[i]['FAF'] = train_csv.iloc[i]['FAF'] * (train_csv.iloc[i]['Bmi'] / 25)
+# for i in range(len(test_csv)):
+#     test_csv.iloc[i]['FAF'] = test_csv.iloc[i]['FAF'] * (test_csv.iloc[i]['Bmi'] / 25)
 
 # 1. data
 X = train_csv.drop(['NObeyesdad'], axis=1)
@@ -51,41 +72,42 @@ for col in lelist:
     X.iloc[:,col] = lee.fit_transform(X.iloc[:,col])
     test_csv.iloc[:, col] = lee.transform(test_csv.iloc[:,col])
 
-print(X)
+for col in X.columns:
+    X[col] = X[col].astype('float32')
+    test_csv[col] = test_csv[col].astype('float32')
 
+X['something'] = X.iloc[:, 8] + X.iloc[:, 14]
+test_csv['something'] = test_csv.iloc[:, 8] + test_csv.iloc[:, 14]
+# X['something'] = (X.iloc[:, 8] + 1) * (X.iloc[:, 14] + 1)
+# test_csv['something'] = (test_csv.iloc[:, 8] + 1) * (test_csv.iloc[:, 14] + 1)
 le = LabelEncoder()
 y = le.fit_transform(y)
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
 
-# smt = SMOTE(random_state=42, n_jobs=-3)
-# X_train, y_train = smt.fit_resample(X_train, y_train)
 print(X_train.shape, y_train.shape)
 
+params = {
+    'n_estimators': [500, 700, 1000],
+    'learning_rate': [0.008, 0.01, 0.012, 0.014, 0.016, 0.018, 0.02] ,
+    'max_depth': [5, 7, 9, 11, 13, 15, 17],
+    'subsample': [0.4, 0.5, 0.6, 0.7, 0.8, 1.0],
+    'colsample_bytree': [0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0],
+}
+
 # 2. model
-rfc = RandomForestClassifier()
+model = RandomizedSearchCV(XGBClassifier(), params, n_iter=30 , n_jobs=-3, cv=5, verbose=1, random_state=42)
 
 
 
 # 3. compile, fit
-rfc.fit(X_train, y_train)
+model.fit(X_train, y_train)
 
 # 4. eval
-sc = rfc.score(X_test, y_test)
+sc = model.score(X_test, y_test)
 print("score : ", sc)
-sub = rfc.predict(test_csv)
+sub = model.predict(test_csv)
 sub = le.inverse_transform(sub)
 
 submission_csv['NObeyesdad'] = sub
 submission_csv.to_csv(path + "submission.csv", index=False)
-
-# score :  0.899325626204239
-# score :  0.8995664739884393
-# score :  0.8998073217726397
-
-# n_splits = 5
-# kfold = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=42)
-# scores = cross_val_score(rfc, X_train, y_train, cv=kfold, n_jobs=-5)
-# print("scores : ", scores)
-# print("mean score : ", np.mean(scores))
-# print("max score : ", np.max(scores))

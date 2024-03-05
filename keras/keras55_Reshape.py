@@ -14,7 +14,7 @@ print(X_test.shape, y_test.shape)
 y_train = y_train.reshape(-1, 1)
 y_test = y_test.reshape( -1, 1)
 
-ohe = OneHotEncoder(sparse_output=False)
+ohe = OneHotEncoder(sparse=False)
 y_train = ohe.fit_transform(y_train)
 y_test = ohe.transform(y_test)
 
@@ -30,7 +30,7 @@ model.add(Conv2D(30, (4, 4), activation='relu'))                                
 model.add(Conv2D(150, (5, 5), activation='relu'))                               # 20, 20, 150
 model.add(Dropout(0.3))
 model.add(Conv2D(50, (6, 6), activation='relu'))                                # 15, 15, 50
-model.add(Reshape(target_shape=(15*15, 50)))                                    # 225, 50
+model.add(Reshape(target_shape=(15*15, -1)))                                    # 225, 50
 model.add(Conv1D(30, 2))                                                        # 224, 30
 model.add(Flatten())                                                            # 6720, 
 model.add(Dense(10))                                                            # 10,
@@ -38,7 +38,6 @@ model.add(Dense(10))
 model.add(Dense(units=64, activation='relu'))
 model.add(Dense(10))
 model.add(Dense(10, activation='softmax'))
-model.summary()
 #3 compile, fit
 from keras.callbacks import EarlyStopping
 es = EarlyStopping(monitor='val_loss', mode='min', patience=30, verbose=1, restore_best_weights=True )

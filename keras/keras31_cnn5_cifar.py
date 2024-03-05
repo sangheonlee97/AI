@@ -44,8 +44,8 @@ model.add(Dense(10, activation='softmax'))
 model.summary()
 
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
-es = EarlyStopping(monitor='val_loss', mode='min', patience=20, restore_best_weights=True, verbose=1)
-model.fit(X_train, y_train, epochs=1000, batch_size=1000, validation_split=0.1, callbacks=[es], verbose=1)
+es = EarlyStopping(monitor='val_loss', mode='min', patience=30, restore_best_weights=True)
+model.fit(X_train, y_train, validation_split=0.2, batch_size=500, epochs=100, callbacks=[es])
 
 res = model.evaluate(X_test, y_test)
 
