@@ -9,7 +9,7 @@ def outliers(data_out):
     iqr = quartile_3 - quartile_1
     print("iqr : ", iqr)
     lower_bound = quartile_1 - (iqr * 1.5)
-    upper_bound = quartile_1 + (iqr * 1.5)
+    upper_bound = quartile_3 + (iqr * 1.5)
     return np.where((data_out>upper_bound) | (data_out<lower_bound))
 
 outliers_loc = outliers(aaa)
