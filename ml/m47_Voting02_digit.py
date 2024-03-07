@@ -21,8 +21,8 @@ lr = LogisticRegression()
 
 model = VotingClassifier(
     estimators=[('LR', lr), ('RF', rf), ('XGB', xgb)],
-    # voting='hard',  # 디폴트
-    voting='soft',
+    voting='hard',  # 디폴트
+    # voting='soft',
     
 )
 
