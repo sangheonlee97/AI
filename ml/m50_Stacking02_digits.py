@@ -1,5 +1,6 @@
+
 import numpy as np
-from sklearn.datasets import load_breast_cancer
+from sklearn.datasets import load_digits
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.ensemble import RandomForestClassifier, StackingClassifier
@@ -7,7 +8,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, f1_score
 from xgboost import XGBClassifier
 from catboost import CatBoostClassifier
-X, y = load_breast_cancer(return_X_y=True)
+X, y = load_digits(return_X_y=True)
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.2, random_state=777, stratify=y)
 
