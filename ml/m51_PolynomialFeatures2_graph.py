@@ -9,7 +9,7 @@ np.random.seed(888)
 X = 2 * np.random.rand(100, 1) - 1      # -1 ~ 1 범위의 난수 생성
 y = 3 * X**2 + 2 * X + 1 + np.random.randn(100, 1)
 
-pf = PolynomialFeatures(degree=2, include_bias=False)
+pf = PolynomialFeatures(degree=15, include_bias=False)
 X_p = pf.fit_transform(X)
 
 model = LinearRegression()
