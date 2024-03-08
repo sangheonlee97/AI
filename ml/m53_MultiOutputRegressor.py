@@ -38,7 +38,7 @@ print(model.predict([X[-1]]))
 # print(model.predict([X[-1]]))
 
 from sklearn.multioutput import MultiOutputRegressor
-model = MultiOutputRegressor(LGBMRegressor(loss='MultiRMSE'))     # 성공
+model = MultiOutputRegressor(LGBMRegressor())     # 성공
 model.fit(X, y)
 y_pred = model.predict(X)
 print(model.__class__.__name__, "mae : ", round(mean_absolute_error(y, y_pred), 4))
