@@ -77,15 +77,6 @@ print('best : ', best)
 end_time = time.time()
 print('걸린 시간 : ', round(end_time - start_time), '초')
 print("acc : ", -(trial_val.best_trial['result']['loss']))
-# best :  { 'colsample_bytree': 0.6529818131764954, 
-#           'learning_rate': 0.16006901792990708, 
-#           'max_bin': 309.0, 
-#           'max_depth': 5.0, 
-#           'min_child_samples': 130.0, 
-#           'min_child_weight': 4.0, 
-#           'num_leaves': 29.0, 
-#           'reg_alpha': 2.1292981124498547, 
-#           'reg_lambda': 5.200657338664019, 
-#           'subsample': 0.6437730580983474}
-# 걸린 시간 :  8 초
-# acc :  0.9666666666666667
+# best :  {'colsample_bytree': 0.5022412841350425, 'learning_rate': 0.6520681251567894, 'max_bin': 309.0, 'max_depth': 8.0, 'min_child_samples': 14.0, 'min_child_weight': 24.0, 'num_leaves': 34.0, 'reg_alpha': 47.048154016633205, 'reg_lambda': 8.556279037847574, 'subsample': 0.8349555413949767}
+# 걸린 시간 :  55 초
+# acc :  0.901525778164075
