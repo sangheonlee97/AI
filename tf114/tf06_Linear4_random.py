@@ -1,13 +1,15 @@
 import tensorflow as tf
 
-tf.set_random_seed(123)
+# tf.set_random_seed(123)
 sess = tf.compat.v1.Session()
 
-X = [1,2,3,4,5]
-y = [1,2,3,4,5]
+X = [1, 2, 3, 4, 5]
+y = [3, 5, 7, 9, 11]
 
-w = tf.Variable(111, dtype=tf.float32)
-b = tf.Variable(0, dtype=tf.float32)
+# w = tf.Variable(111, dtype=tf.float32)
+# b = tf.Variable(0, dtype=tf.float32)
+w = tf.Variable(tf.random_normal([1]), dtype=tf.float32)
+b = tf.Variable(tf.random_normal([1]), dtype=tf.float32)
 
 
 hypothesis = X * w + b
