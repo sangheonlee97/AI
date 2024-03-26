@@ -46,9 +46,9 @@ r = random.randint(1,500)
 X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.1, random_state=38)
 
 # XGBoost 모델 학습
-xgb_params = {'learning_rate': 0.008,
-            'n_estimators': 150,
-            'max_depth': 15,
+xgb_params = {'learning_rate': 0.0005,
+            'n_estimators': 350,
+            'max_depth': 20,
             'min_child_weight': 0.07709868781803283,
             'subsample': 0.80309973945344,
             'colsample_bytree': 0.9254025887963853,
@@ -59,9 +59,9 @@ xgb_params = {'learning_rate': 0.008,
 model = xgb.XGBRegressor(**xgb_params)
 model.fit(X_train, y_train, eval_set=[(X_val, y_val)], early_stopping_rounds=50, verbose=100)
 import joblib
-
+save_path = ''.join(path + "income_xgb_03_26_3")
 # 모델 저장
-joblib.dump(model, "../_data/dacon/income/weights/money_xgb_03_18_5.pkl")
+joblib.dump(model, save_path + ".pkl")
 
 # 저장된 모델 불러오기
 # loaded_model = joblib.load("../_data/dacon/income/weights/money_xgb_03_18_2.pkl")
@@ -78,4 +78,4 @@ y_submit = model.predict(test_csv)
 submission_csv['Income'] = y_submit
 print(y_submit)
 
-submission_csv.to_csv(path + "submisson_03_18_5_xgb.csv", index=False)
+submission_csv.to_csv(save_path + ".csv", index=False)
