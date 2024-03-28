@@ -11,10 +11,11 @@ train_csv = pd.read_csv(path + "train.csv", index_col=0)
 test_csv = pd.read_csv(path + "test.csv", index_col=0)
 submission_csv = pd.read_csv(path + "sample_submission.csv")
 
+new_train_csv = train_csv.copy()
+new_train_csv = new_train_csv[new_train_csv['Income'] != 0]
 
-
-X = train_csv.drop(['Income'], axis=1)
-y = train_csv['Income']
+X = new_train_csv.drop(['Income'], axis=1)
+y = new_train_csv['Income']
 test = test_csv
 lb = LabelEncoder()
 
@@ -43,23 +44,23 @@ import random
 r = random.randint(1,500)
 
 # 훈련 데이터와 검증 데이터 분리
-X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.1, random_state=38)
+X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=107533423)
 
 # XGBoost 모델 학습
-xgb_params = {'learning_rate': 0.0005,
-            'n_estimators': 350,
-            'max_depth': 20,
+xgb_params = {'learning_rate': 0.008,
+            'n_estimators': 300,
+            'max_depth': 15,
             'min_child_weight': 0.07709868781803283,
-            'subsample': 0.80309973945344,
-            'colsample_bytree': 0.9254025887963853,
+            'subsample': 0.70309973945344,
+            'colsample_bytree': 0.8254025887963853,
             'gamma': 6.628562492458777e-08,
             'reg_alpha': 0.012998871754325427,
             'reg_lambda': 0.10637051171111844}
 
 model = xgb.XGBRegressor(**xgb_params)
-model.fit(X_train, y_train, eval_set=[(X_val, y_val)], early_stopping_rounds=50, verbose=100)
+model.fit(X_train, y_train, eval_set=[(X_val, y_val)], early_stopping_rounds=30, verbose=100)
 import joblib
-save_path = ''.join(path + "income_xgb_03_26_3")
+save_path = ''.join(path + "income_xgb_03_28_test3")
 # 모델 저장
 joblib.dump(model, save_path + ".pkl")
 
@@ -76,6 +77,7 @@ y_submit = model.predict(test_csv)
 # y_submit = lae.inverse_transform(y_submit)
 # y_submit = lae.inverse_transform(y_submit)
 submission_csv['Income'] = y_submit
+submission_csv.loc[submission_csv['Income'] < 200, 'Income'] = 0.0
 print(y_submit)
 
 submission_csv.to_csv(save_path + ".csv", index=False)
