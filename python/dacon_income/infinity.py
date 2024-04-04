@@ -70,16 +70,16 @@ while True:
 
     if min > rmse_val:
         # 모델 저장
-        save_path_model = os.path.join(path, f"income_xgb_03_27_{rmse_val:.2f}.pkl")
+        save_path_model = os.path.join(path, f"income_xgb_04_03_{rmse_val:.2f}.pkl")
         joblib.dump(model, save_path_model)
 
         # 파라미터 저장
-        save_path_params = os.path.join(path, f"income_xgb_03_27_{rmse_val:.2f}.json")
+        save_path_params = os.path.join(path, f"income_xgb_04_03_{rmse_val:.2f}.json")
         with open(save_path_params, 'w') as f:
             json.dump(xgb_params, f)
 
         # submission 파일 저장
-        save_path_csv = os.path.join(path, f"income_xgb_03_27_{rmse_val:.2f}.csv")
+        save_path_csv = os.path.join(path, f"income_xgb_04_03_{rmse_val:.2f}.csv")
         submission_csv['Income'] = model.predict(test_scaled)
         submission_csv.to_csv(save_path_csv, index=False)
         min = rmse_val
