@@ -64,19 +64,18 @@ hypothesis = tf.compat.v1.nn.softmax(tf.compat.v1.matmul(L3, w4) + b4)
 loss = tf.reduce_mean(-tf.reduce_sum(y * tf.math.log(hypothesis + 1e-7), axis=1))  # categorical crossentropy
 train = tf.compat.v1.train.AdamOptimizer().minimize(loss)
 
-EPOCHS = 1
+EPOCHS = 10
 batch_size = 16
 with tf.compat.v1.Session() as sess:
     sess.run(tf.compat.v1.global_variables_initializer())
-    avg = 0
     for epoch in range(EPOCHS):
+        avg = 0
         for i in range(len(X_train) // batch_size):
             _, c = sess.run([train, loss], feed_dict={X:X_train[i * batch_size : (i+1) * batch_size], y:y_train[i * batch_size : (i+1) * batch_size]})
             avg += c / (len(X_train) // batch_size)
             print('epoch : ', epoch + 1, " |  batch : ", i + 1, " |  loss : ", avg)
         sess.run([train, loss], feed_dict={X:X_train[(len(X_train) // batch_size) * batch_size:], y:y_train[(len(X_train) // batch_size) * batch_size:]})
         print("epoch : ", epoch + 1, "loss : ", avg)
-    tf.compat.v1.enable_eager_execution()
     predict = sess.run(hypothesis, feed_dict={X:X_test})
 from sklearn.metrics import accuracy_score
 test = np.argmax(y_test, axis=1)
