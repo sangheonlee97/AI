@@ -12,3 +12,13 @@ hello = tf.constant('hello world')
 sess = tf.compat.v1.Session()
 
 print(sess.run(hello))
+'''
+Tensor1 은 '그래프연산' 모드
+Tensor2 는 '즉시실행' 모드
+
+tf.compat.v1.enable_eager_execution() : 즉시실행 모드 켜(tensor2 디폴트)
+tf.compat.v1.disable_eager_execution() : 즉시실행 모드 꺼(tensor1 디폴트) -> 그래프 연산모드로 돌아간다 -> Tensor1 코드를 쓸 수 있다.
+
+tf.executing_eagerly() :    True면 즉시 실행모드 -> tensor2 코드만 써야한다.
+                            False면 그래프 연산모드 ->tensor1 코드를 쓸 수 있다.
+'''
