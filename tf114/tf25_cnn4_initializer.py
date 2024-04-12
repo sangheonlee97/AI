@@ -21,23 +21,23 @@ print(y_test.shape)
 X = tf.compat.v1.placeholder(tf.float32, (None, 28, 28, 1))
 y = tf.compat.v1.placeholder(tf.float32, (None, 10))
 
-w1 = tf.compat.v1.get_variable('w1', shape=(3, 3, 1, 64))
+w1 = tf.compat.v1.get_variable('w1', shape=(3, 3, 1, 64), initializer=tf.contrib.layers.xavier_initializer())
 b1 = tf.compat.v1.Variable(tf.zeros(shape=(1, 64)))
 L1 = tf.compat.v1.nn.conv2d(X, w1, strides=(1,1,1,1), padding='SAME') + b1
 L1 = tf.nn.swish(L1)
 L1_MaxPool = tf.nn.max_pool2d(L1, (1, 2, 2, 1), strides=(1, 2, 2, 1), padding='VALID')
 
-w2 = tf.compat.v1.get_variable('w2', shape=(3, 3, 64, 32))
+w2 = tf.compat.v1.get_variable('w2', shape=(3, 3, 64, 32), initializer=tf.contrib.layers.xavier_initializer())
 b2 = tf.compat.v1.Variable(tf.zeros((1, 32)))
 L2 = tf.compat.v1.nn.conv2d(L1_MaxPool, w2, strides=(1,1,1,1), padding='VALID') + b2
 L2 = tf.nn.swish(L2)
 
 flatten = tf.compat.v1.reshape(L2, (-1, L2.shape[1] * L2.shape[2] * L2.shape[3]))
 
-w3 = tf.compat.v1.get_variable('w3', shape=(flatten.shape[1], 32), dtype=tf.float32)
+w3 = tf.compat.v1.get_variable('w3', shape=(flatten.shape[1], 32), dtype=tf.float32, initializer=tf.contrib.layers.xavier_initializer())
 L3 = tf.compat.v1.matmul(flatten, w3)
 
-w4 = tf.compat.v1.get_variable('w4', (32, 10), tf.float32)
+w4 = tf.compat.v1.get_variable('w4', (32, 10), tf.float32, initializer=tf.contrib.layers.xavier_initializer())
 hypothesis = tf.compat.v1.nn.softmax(tf.compat.v1.matmul(L3, w4))
 
 loss = tf.reduce_mean(-tf.reduce_sum(y * tf.math.log(hypothesis + 1e-7), axis=1))  # categorical crossentropy
@@ -47,8 +47,8 @@ EPOCHS = 3
 batch_size = 64
 with tf.compat.v1.Session() as sess:
     sess.run(tf.compat.v1.global_variables_initializer())
+    avg = 0
     for epoch in range(EPOCHS):
-        avg = 0
         for i in range(len(X_train) // batch_size):
             _, c = sess.run([train, loss], feed_dict={X:X_train[i * batch_size : (i+1) * batch_size], y:y_train[i * batch_size : (i+1) * batch_size]})
             avg += c / (len(X_train) // batch_size)
