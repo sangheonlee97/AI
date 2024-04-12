@@ -100,7 +100,7 @@ model.summary()
 from keras.callbacks import EarlyStopping, ReduceLROnPlateau
 es = EarlyStopping(monitor='val_loss',mode='auto',patience=30,restore_best_weights=True)
 reduce_lr = ReduceLROnPlateau(monitor='val_loss',mode='auto',patience=50,factor=0.7)
-model.fit(x_train,y_train,epochs=5,batch_size=128,validation_split=0.2,verbose=1,callbacks=[es,reduce_lr])
+model.fit(x_train,y_train,epochs=30,batch_size=128,validation_split=0.2,verbose=1,callbacks=[es,reduce_lr])
 
 score = model.evaluate(x_test,y_test)
 print(f"LOSS: {score[0]}\nACC:  {score[1]}")
