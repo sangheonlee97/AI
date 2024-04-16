@@ -52,6 +52,8 @@ print('model.best_estimator_ : ', model.best_estimator_)
 print('model.best_score_ : ', model.best_score_)
 print('model.score : ', model.score(X_test, y_test))
 
+from sklearn.metrics import r2_score
+print('r2 : ', r2_score(y_test, model.predict(X_test).round()))
 # model.best_params_ :  {'opti': 'adam', 'node3': 16, 'node2': 32, 'node1': 32, 'drop': 0.2, 'batch_size': 200, 'activation': 'linear'}
 # model.best_estimator_ :  <keras.wrappers.scikit_learn.KerasRegressor object at 0x000001CB0EC3A550>
 # model.best_score_ :  -0.6856172680854797
